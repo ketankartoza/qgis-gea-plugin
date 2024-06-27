@@ -1,10 +1,20 @@
-# QGIS GEA Afforestation tool
+# QGIS GEA plugin
+
+![icon.png](resources/icon.png)
 
 
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/kartoza/qgis-gea-plugin/ci.yml?branch=main)
 ![GitHub](https://img.shields.io/github/license/kartoza/qgis-gea-plugin)
 
-QGIS plugin description.
+[![QGIS.org](https://img.shields.io/badge/QGIS.org-ondevelopment-yellow?logo=qgis)](https://plugins.qgis.org/plugins/qgis-gea-plugin/)
+
+[![Documentation](https://img.shields.io/badge/Documentation-available-active?logo=readthedocs)]( https://kartoza.github.io/qgis-gea-plugin)
+[![Tests](https://img.shields.io/badge/Tests-onprogress-inactive?logo=pytest)](https://github.com/kartoza/ci-qgis-gea-plugin/actions/workflows/ci.yml)
+
+![GitHub all releases](https://img.shields.io/github/downloads/kartoza/qgis-gea-plugin/total?logo=github&label=github-downloads)
+
+
+Adds functionality inside QGIS to enable GEA afforestation visualization and analysis.
 
 ### Installation
 
@@ -15,8 +25,8 @@ a dedicated plugin repository
 #### Install from QGIS plugin repository
 
 - Open QGIS application and open plugin manager.
-- Search for `QGIS GEA Afforestation tool` in the All page of the plugin manager.
-- From the found results, click on the `QGIS GEA Afforestation tool` result item and a page with plugin information will show up. 
+- Search for `QGIS GEA afforestation tool` in the All page of the plugin manager.
+- From the found results, click on the `QGIS GEA afforestation tool` result item and a page with plugin information will show up. 
   
 - Click the `Install Plugin` button at the bottom of the dialog to install the plugin.
 
