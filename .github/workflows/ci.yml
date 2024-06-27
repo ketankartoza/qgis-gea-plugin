@@ -29,9 +29,9 @@ jobs:
       matrix:
         qgis_version_tag:
           - release-3_16
-          - release-3_20
-          - release-3_24
-          - release-3_26
+          - release-3_34
+          - release-3_36
+          - release-3_38
         os: [ubuntu-22.04]
 
     steps:
