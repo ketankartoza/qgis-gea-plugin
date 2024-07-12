@@ -23,7 +23,7 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load QgisCplus class
+    """Load QgisGea class
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
