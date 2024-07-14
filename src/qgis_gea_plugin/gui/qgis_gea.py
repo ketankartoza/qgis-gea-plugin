@@ -150,16 +150,20 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         set_layer = None
         active_layer = None
 
+        closed_imagery = None
+
         if self.historical_imagery.isChecked():
             settings_manager.set_value(Settings.HISTORICAL_VIEW, True)
             settings_manager.set_value(Settings.NICFI_VIEW, False)
 
             self.current_imagery_type = IMAGERY.HISTORICAL
+            closed_imagery = IMAGERY.NICFI
         else:
             settings_manager.set_value(Settings.NICFI_VIEW, True)
             settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
 
             self.current_imagery_type = IMAGERY.NICFI
+            closed_imagery = IMAGERY.HISTORICAL
 
         layers = QgsProject.instance().mapLayers()
         for path, layer in layers.items():
@@ -170,7 +174,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     layer.temporalProperties().fixedTemporalRange()
                 )
                 active_layer = layer
-            else:
+            elif layer.metadata().contains(
+                    closed_imagery.value.lower()
+            ):
                 set_layer = layer
 
         self.update_layer_group(set_layer)
