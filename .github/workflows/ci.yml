@@ -28,7 +28,8 @@ jobs:
       fail-fast: false
       matrix:
         qgis_version_tag:
-          - release-3_16
+          - release-3_26
+          - release-3_30
           - release-3_34
           - release-3_36
         os: [ubuntu-22.04]

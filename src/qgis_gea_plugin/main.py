@@ -19,7 +19,7 @@ from qgis.PyQt.QtWidgets import QAction, QDockWidget, QMainWindow, QVBoxLayout
 # Initialize Qt resources from file resources.py
 from .resources import *
 
-from .gui.qgis_gea_plugin import QgisGeaPlugin
+from .gui.qgis_gea import QgisGeaPlugin
 
 
 class QgisGea:
