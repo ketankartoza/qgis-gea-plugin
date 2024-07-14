@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
- The plugin main window class file
+The plugin main window class file.
 """
 
 import os
@@ -17,15 +17,11 @@ from qgis.PyQt.uic import loadUiType
 from qgis.core import QgsProject, QgsInterval, QgsUnitTypes, QgsTemporalNavigationObject
 from qgis.gui import QgsLayerTreeView
 
-from qgis.utils import iface
-
 from ..resources import *
-
 from ..models.base import IMAGERY
 from ..definitions.defaults import ANIMATION_PLAY_ICON, ANIMATION_PAUSE_ICON, PLUGIN_ICON
 from ..conf import settings_manager, Settings
 from ..utils import animation_state_change, log, tr
-
 
 WidgetUi, _ = loadUiType(
     os.path.join(os.path.dirname(__file__), "../ui/main_dockwidget.ui")
@@ -33,13 +29,25 @@ WidgetUi, _ = loadUiType(
 
 
 class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
-    """Main plugin UI"""
+    """
+    Main plugin UI class for QGIS GEA Plugin.
 
-    def __init__(
-        self,
-        iface,
-        parent=None,
-    ):
+    This class represents the main dock widget for the plugin, providing
+    functionality for temporal navigation, layer management and plugin settings.
+
+    """
+
+    def __init__(self, iface, parent=None):
+        """
+        Initialize the QGIS Gea Plugin dock widget.
+
+        :param  iface: Reference to the QGIS interface.
+        :type   iface: QgsInterface
+
+        :param parent: Parent widget. Defaults to None.
+        :type   parent: QWidget
+
+        """
         super().__init__(parent)
         self.setupUi(self)
         self.iface = iface
@@ -54,9 +62,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         icon_pixmap = QtGui.QPixmap(PLUGIN_ICON)
         self.icon_la.setPixmap(icon_pixmap)
 
-        self.play_btn.setIcon(
-            QtGui.QIcon(ANIMATION_PLAY_ICON)
-        )
+        self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PLAY_ICON))
 
         self.time_values = []
 
@@ -86,26 +92,40 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.slider_value_changed
         )
 
-        iface.projectRead.connect(self.prepare_time_slider)
+        self.iface.projectRead.connect(self.prepare_time_slider)
 
     def slider_value_changed(self, value):
+        """
+        Slot function for handling time slider value change.
+
+        :param value: New value of the slider.
+        :type value: int
+        """
         self.navigation_object.setCurrentFrameNumber(value)
 
     def animate_layers(self):
+        """
+        Toggle animation of layers based on the current animation state.
+        This function is called when user press the play button.
+        """
         if self.navigation_object.animationState() == \
-            QgsTemporalNavigationObject.AnimationState.Idle:
-            self.play_btn.setIcon(
-                QtGui.QIcon(ANIMATION_PAUSE_ICON)
-            )
+                QgsTemporalNavigationObject.AnimationState.Idle:
+            self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PAUSE_ICON))
+            self.play_btn.setToolTip(tr("Pause animation"))
             self.navigation_object.playForward()
         else:
             self.navigation_object.pause()
-            self.play_btn.setIcon(
-                QtGui.QIcon(ANIMATION_PLAY_ICON)
-            )
+            self.play_btn.setToolTip(tr("Click to play animation"))
+            self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PLAY_ICON))
 
     def temporal_range_changed(self, temporal_range):
-        iface.mapCanvas().setTemporalRange(temporal_range)
+        """
+        Update temporal range and UI elements when temporal range changes.
+
+        :param temporal_range: New temporal range.
+        :type temporal_range: QgsDateTimeRange
+        """
+        self.iface.mapCanvas().setTemporalRange(temporal_range)
         self.temporal_range_la.setText(
             tr(
                 f'Current time range: '
@@ -118,13 +138,14 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         # On the last animation frame
         if self.navigation_object.currentFrameNumber() == \
-            len(self.navigation_object.availableTemporalRanges()) - 1:
+                len(self.navigation_object.availableTemporalRanges()) - 1:
 
-            self.play_btn.setIcon(
-                QtGui.QIcon(ANIMATION_PLAY_ICON)
-            )
+            self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PLAY_ICON))
 
     def prepare_time_slider(self):
+        """
+        Prepare the time slider based on current selected imagery type.
+        """
         values = []
         set_layer = None
         active_layer = None
@@ -161,7 +182,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         temporal_range = values[0] if len(values) > 0 else None
 
         if temporal_range:
-            iface.mapCanvas().setTemporalRange(temporal_range)
+            self.iface.mapCanvas().setTemporalRange(temporal_range)
             self.temporal_range_la.setText(
                 tr(
                     f'Current time range: '
@@ -170,7 +191,15 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 ))
 
     def update_layer_group(self, layer, show=False):
+        """
+        Update visibility of provided layer parent group.
 
+        :param layer: Layer to update.
+        :type layer: QgsMapLayer
+
+        :param show: Group visibility state. Defaults to False.
+        :type show: bool
+        """
         if layer is not None:
             root = QgsProject.instance().layerTreeRoot()
             layer_tree = root.findLayer(layer.id())
