@@ -536,6 +536,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
             QgsProject.instance().removeMapLayer(self.drawing_layer)
 
+            self.iface.mapCanvas().refresh()
+
             self.show_message(
                 tr("Cleared the project area successfully."),
                 Qgis.Info
