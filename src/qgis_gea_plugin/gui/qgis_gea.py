@@ -139,6 +139,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.drawing_layer = None
         self.drawing_layer_path = None
 
+        self.feature_count = 0
+
         self.iface.projectRead.connect(self.prepare_time_slider)
 
     def save_settings(self):
@@ -356,7 +358,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         folder_path = self.project_folder.filePath()
         sites_path = os.path.join(folder_path, 'sites')
 
-        self.capture_date = datetime.now().strftime('%d%m%Y')
+        self.capture_date = datetime.now().strftime('%d%m%y')
 
         area_name = (f"{self.site_reference_le.text()}_"
                         f"{QgsProject.instance().baseName()}_"
@@ -371,6 +373,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             f"{area_name}",
             "memory"
         )
+
+        # Connect to the layer's signals
+        self.drawing_layer.featureAdded.connect(self.layer_feature_added)
+        self.drawing_layer.editingStopped.connect(self.layer_editing_stopped)
 
         # Add fields to the layer
         provider = self.drawing_layer.dataProvider()
@@ -412,6 +418,24 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.iface.shapeDigitizeToolBar().setVisible(True)
 
         self.iface.actionAddFeature().trigger()
+
+    def layer_feature_added(self, id):
+        self.feature_count += 1
+        if self.feature_count > 1:
+            self.drawing_layer.deleteFeature(id)
+            self.show_message(
+                tr("Only one feature is allowed."
+                   " Additional features are not permitted."),
+                Qgis.Warning
+            )
+        else:
+            self.show_message(
+                tr(f"New feature has been added."
+                   f" Save the project area to keep polygon."),
+                Qgis.Info)
+
+    def layer_editing_stopped(self):
+        self.feature_count = 0
 
     # Disable editing for specific fields
     def update_field_editing(self, layer, field_names, enabled):
@@ -480,7 +504,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             first_feature.setAttribute("version", self.site_ref_version_le.text())
             first_feature.setAttribute("author", self.report_author_le.text())
             first_feature.setAttribute("country", self.country_cmb_box.currentText())
-            first_feature.setAttribute("inception_date", selected_date_time.toString(QtCore.Qt.ISODateWithMs))
+            first_feature.setAttribute("inception_date", selected_date_time.toString("MMyy"))
             first_feature.setAttribute("capture_date", self.capture_date)
             first_feature.setAttribute("area (ha)", feature_area)
 
