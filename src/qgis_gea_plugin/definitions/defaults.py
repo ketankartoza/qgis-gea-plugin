@@ -44,3 +44,4 @@ COUNTRY_NAMES = [
 ]
 
 SITE_GROUP_NAME = "Proposed Site Boundaries"
+SITE_REPORT_TEMPLATE_NAME = "site_report.qpt"
