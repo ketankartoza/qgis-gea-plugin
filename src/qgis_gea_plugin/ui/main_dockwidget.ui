@@ -66,7 +66,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>../../../../../../../../../../../../../../../../../../.designer/icons/icon.png</pixmap>
+          <pixmap>../../../../../../../../../../../../../../../../../../../../../../.designer/icons/icon.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -122,22 +122,19 @@
          <property name="text">
           <string>Historical Imagery (Landsat)</string>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="shortcut">
+          <string>Ctrl+S</string>
          </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="0" column="1">
         <widget class="QCheckBox" name="nicfi_imagery">
          <property name="text">
-          <string>Current Imagery (NICIFI)</string>
+          <string>Recent Imagery (NICFI)</string>
          </property>
-         <attribute name="buttonGroup">
-          <string notr="true">buttonGroup</string>
-         </attribute>
         </widget>
        </item>
        <item row="1" column="0">
@@ -441,7 +438,4 @@
  </customwidgets>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>
