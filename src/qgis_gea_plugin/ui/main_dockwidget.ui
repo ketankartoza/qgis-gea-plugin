@@ -247,6 +247,9 @@
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_5">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Country where the project was conducted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Country</string>
            </property>
@@ -264,6 +267,9 @@
          </item>
          <item row="5" column="0">
           <widget class="QLabel" name="label">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Directory where all the corresponding sites layers will be saved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Project folder</string>
            </property>
@@ -271,6 +277,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QLabel" name="label_6">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Slack-Lato','Slack-Fractions','appleLogo','sans-serif'; font-size:15px; color:#1d1c1d; background-color:#f8f8f8;&quot;&gt;Allows a user to track any updates to an already defined site boundary, and save the new boundary as a same-name, but with version 2,3,4 etc.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Version of the site reference</string>
            </property>
@@ -278,6 +287,9 @@
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_3">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Slack-Lato','Slack-Fractions','appleLogo','sans-serif'; font-size:15px; color:#1d1c1d; background-color:#f8f8f8;&quot;&gt;The unique location / name of the user-defined polygon that represents a possible re-afforestation site&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Site reference</string>
            </property>
@@ -285,6 +297,9 @@
          </item>
          <item row="3" column="0">
           <widget class="QLabel" name="label_4">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The tool-user who created the site polygon and saved the site details.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Author of site capture</string>
            </property>
@@ -302,6 +317,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_2">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Refers to a fixed point in time, representing the inception date of the whole re-afforestation project.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Project inception date</string>
            </property>
