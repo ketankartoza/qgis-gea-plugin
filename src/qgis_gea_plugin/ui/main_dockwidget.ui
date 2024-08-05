@@ -179,6 +179,16 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QCheckBox" name="loop_box">
+           <property name="toolTip">
+            <string>Enable a loop when playing animation</string>
+           </property>
+           <property name="text">
+            <string>Loop</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
