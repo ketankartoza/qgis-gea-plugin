@@ -43,5 +43,11 @@ COUNTRY_NAMES = [
     "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ]
 
+<<<<<<< HEAD
 SITE_GROUP_NAME = "Proposed Site Boundaries"
 SITE_REPORT_TEMPLATE_NAME = "site_report.qpt"
+=======
+SITE_GROUP_NAME = "Proposed site boundaries"
+
+SITE_REPORT_TEMPLATE_NAME = "site_sustainability.qpt"
+>>>>>>> cea2ef7 (Add site sustainability template.)
