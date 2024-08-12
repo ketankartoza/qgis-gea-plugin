@@ -54,7 +54,7 @@ SITE_GROUP_NAME = "Proposed Site Boundaries"
 
 SITE_REPORT_TEMPLATE_NAME = "reforestation_site.qpt"
 
-OVERVIEW_ZOOM_OUT_FACTOR = 12
+OVERVIEW_ZOOM_OUT_FACTOR = 13
 DETAILED_ZOOM_OUT_FACTOR = 3
 
 # Style for the site boundary polygon in the report

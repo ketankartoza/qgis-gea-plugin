@@ -548,10 +548,9 @@ class SiteReportReportGeneratorTask(QgsTask):
         if self._landscape_layer is None:
             tr_msg = tr(
                 "Landscape layer is missing, landscape maps will not "
-                "be rendered."
+                "be rendered correctly."
             )
             self._error_messages.append(tr_msg)
-            return
 
         # landscape layer with mask map
         historic_mask_map = self._get_map_item_by_id("historic_mask_map")
@@ -572,7 +571,8 @@ class SiteReportReportGeneratorTask(QgsTask):
             else:
                 landscape_mask_layers = [self._site_layer]
                 landscape_mask_layers.extend(mask_layers)
-                landscape_mask_layers.append(self._landscape_layer)
+                if self._landscape_layer is not None:
+                    landscape_mask_layers.append(self._landscape_layer)
                 historic_mask_map.setFollowVisibilityPreset(False)
                 historic_mask_map.setFollowVisibilityPresetName("")
                 historic_mask_map.setLayers(landscape_mask_layers)
@@ -596,10 +596,9 @@ class SiteReportReportGeneratorTask(QgsTask):
                 )
                 self._error_messages.append(tr_msg)
             else:
-                landscape_no_mask_layers = [
-                    self._site_layer,
-                    self._landscape_layer
-                ]
+                landscape_no_mask_layers = [self._site_layer]
+                if self._landscape_layer is not None:
+                    landscape_no_mask_layers.append(self._landscape_layer)
 
                 landscape_no_mask_map.setFollowVisibilityPreset(False)
                 landscape_no_mask_map.setFollowVisibilityPresetName("")
