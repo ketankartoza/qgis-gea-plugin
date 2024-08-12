@@ -31,6 +31,7 @@ from ...definitions.defaults import (
     DETAILED_ZOOM_OUT_FACTOR,
     EXCLUSION_MASK_GROUP_NAME,
     GOOGLE_LAYER_NAME,
+    LANDSAT_2013_LAYER_SEGMENT,
     LANDSAT_IMAGERY_GROUP_NAME,
     OVERVIEW_ZOOM_OUT_FACTOR,
     RECENT_IMAGERY_GROUP_NAME,
@@ -458,58 +459,57 @@ class SiteReportReportGeneratorTask(QgsTask):
         """Set the landscape layer i.e. Nicfi or Landsat depending on the
         information in the TemporalInfo object.
         """
-        if self._context.temporal_info.image_type == IMAGERY.NICFI:
-            group_name = RECENT_IMAGERY_GROUP_NAME
-        elif self._context.temporal_info.image_type == IMAGERY.HISTORICAL:
-            group_name = LANDSAT_IMAGERY_GROUP_NAME
-        else:
-            group_name = ""
+        # For now, we are only interested in Landsat 2013
+        # hence the commented code.
+        # if self._context.temporal_info.image_type == IMAGERY.NICFI:
+        #     group_name = RECENT_IMAGERY_GROUP_NAME
+        # elif self._context.temporal_info.image_type == IMAGERY.HISTORICAL:
+        #     group_name = LANDSAT_IMAGERY_GROUP_NAME
+        # else:
+        #     group_name = ""
+        #
+        # if not group_name:
+        #     tr_msg = tr("Landscape group name could not be determined")
+        #     self._error_messages.append(tr_msg)
+        #     return
+        #
+        # layers = self._get_layers_in_group(group_name)
+        # if len(layers) == 0:
+        #     tr_msg = tr("No layers in landscape group")
+        #     self._error_messages.append(f"{tr_msg}: {group_name}")
+        #     return
+        #
+        # # Search corresponding layers
+        # for layer in layers:
+        #     temporal_properties = layer.temporalProperties()
+        #     if temporal_properties is None:
+        #         continue
+        #
+        #     if not temporal_properties.isActive():
+        #         continue
+        #
+        #     if not isinstance(layer, QgsRasterLayer):
+        #         continue
+        #
+        #     temporal_range = temporal_properties.fixedTemporalRange()
+        #     if temporal_range == self._context.temporal_info.date_range:
+        #         self._landscape_layer = layer
+        #
+        #         break
 
-        if not group_name:
-            tr_msg = tr("Landscape group name could not be determined")
-            self._error_messages.append(tr_msg)
-            return
-
-        layers = self._get_layers_in_group(group_name)
-        if len(layers) == 0:
-            tr_msg = tr("No layers in landscape group")
-            self._error_messages.append(f"{tr_msg}: {group_name}")
-            return
-
-        # Search corresponding layers
-        for layer in layers:
-            temporal_properties = layer.temporalProperties()
-            if temporal_properties is None:
-                continue
-
-            if not temporal_properties.isActive():
-                continue
-
-            if not isinstance(layer, QgsRasterLayer):
-                continue
-
-            temporal_range = temporal_properties.fixedTemporalRange()
-            if temporal_range == self._context.temporal_info.date_range:
-                self._landscape_layer = layer
-
-                # Update landscape description label
-                year = temporal_range.begin().date().year()
-                if year == 0:
-                    year_str = ""
-                else:
-                    year_str = str(year)
-
-                full_description = f"{group_name} {year_str} " \
-                                   f"{REPORT_LANDSCAPE_DESCRIPTION_SUFFIX}"
-                self.set_label_value(
-                    "landscape_description_label",
-                    full_description
-                )
-                break
+        landsat_2013_layer = self._get_layer_from_node_name(
+            LANDSAT_2013_LAYER_SEGMENT,
+            LayerNodeSearch.CONTAINS,
+            LANDSAT_IMAGERY_GROUP_NAME
+        )
+        if landsat_2013_layer is not None:
+            self._landscape_layer = landsat_2013_layer
 
         if self._landscape_layer is None:
             tr_msg = tr("Landscape layer not found")
-            self._error_messages.append(f"{tr_msg} under {group_name}")
+            self._error_messages.append(
+                f"{tr_msg} under {LANDSAT_IMAGERY_GROUP_NAME}"
+            )
 
     def _configure_map_items_zoom_level(self):
         """Set layers and zoom levels of map items."""

@@ -27,7 +27,10 @@ class TestReportManager(TestCase):
         rpm = ReportManager()
         site_metadata = get_site_metadata()
         temporal_info = get_temporal_info()
+
         temp_dir = QtCore.QTemporaryDir()
+        self.assertTrue(temp_dir.isValid())
+
         submit_result = rpm.generate_site_report(
             site_metadata,
             temp_dir.path(),
