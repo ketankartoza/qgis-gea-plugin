@@ -58,7 +58,7 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         self.btn_close.setText(tr("Cancel"))
         self.btn_close.clicked.connect(self._on_closed)
 
-        self.lbl_rule.setText(tr("Generating report..."))
+        self.lbl_message.setText(tr("Generating report..."))
 
         self.pg_bar.setValue(int(self._feedback.progress()))
 
@@ -83,13 +83,21 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         """Slot raised when the report has successfully completed."""
         self.btn_open_pdf.setEnabled(True)
         self._set_close_state()
-        self.lbl_rule.setText(tr("Report generation complete"))
+
+        if len(self.report_result.errors) == 0:
+            self.lbl_message.setText(tr("Report generation complete"))
+        else:
+            tr_msg = tr(
+                "Report generation complete however there were errors "
+                "encountered. \nSee logs for more information."
+            )
+            self.lbl_message.setText(tr_msg)
 
     def _on_report_error(self):
         """Slot raised when an error occurred."""
         self.btn_open_pdf.setEnabled(False)
         self._set_close_state()
-        self.lbl_rule.setText(tr("Error occurred during report generation"))
+        self.lbl_message.setText(tr("Error occurred during report generation"))
 
         log(tr("Error generating report, see logs for more info."))
 
@@ -136,7 +144,7 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
                 return
 
             self._set_close_state()
-            self.lbl_rule.setText(tr("Report generation canceled"))
+            self.lbl_message.setText(tr("Report generation canceled"))
         else:
             self.dialog_closed.emit()
             self.close()
