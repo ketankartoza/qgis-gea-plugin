@@ -38,7 +38,7 @@ from ..definitions.defaults import (
 )
 from ..gui.report_progress_dialog import ReportProgressDialog
 from ..lib.reports.manager import report_manager
-from ..models.base import IMAGERY
+from ..models.base import IMAGERY, MapTemporalInfo
 from ..models.report import SiteMetadata
 
 from ..resources import *
@@ -177,6 +177,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
     def animation_loop_toggled(self, value):
         self.save_settings()
         self.navigation_object.setLooping(value)
+
     def frame_rate_changed(self, value):
         self.save_settings()
         self.navigation_object.setFramesPerSecond(
@@ -760,9 +761,27 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.last_computed_area
         )
 
+        if not self.historical_imagery.isChecked() and not self.nicfi_imagery.isChecked():
+            self.show_message(
+                tr("Please select the imagery type under the Time Slider section."),
+                Qgis.Warning
+            )
+            return
+
+        if self.historical_imagery.isChecked():
+            imagery_type = IMAGERY.HISTORICAL
+        else:
+            imagery_type = IMAGERY.NICFI
+
+        temporal_info = MapTemporalInfo(
+            imagery_type,
+            self.iface.mapCanvas().temporalRange()
+        )
+
         submit_result = report_manager.generate_site_report(
             metadata,
-            self.project_folder.filePath()
+            self.project_folder.filePath(),
+            temporal_info
         )
         if not submit_result.success:
             self.message_bar.pushWarning(

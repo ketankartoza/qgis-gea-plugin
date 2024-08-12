@@ -13,17 +13,15 @@ from qgis.core import (
     Qgis,
     QgsApplication,
     QgsFeedback,
-    QgsMasterLayoutInterface,
     QgsProject,
-    QgsPrintLayout,
     QgsTask,
 )
-from qgis.gui import QgsLayoutDesignerInterface
 from qgis.utils import iface
 
 from qgis.PyQt import QtCore, QtGui, sip
 
 from .generator import SiteReportReportGeneratorTask
+from ...models.base import MapTemporalInfo
 from ...models.report import (
     ReportOutputResult,
     ReportSubmitResult,
@@ -56,7 +54,8 @@ class ReportManager(QtCore.QObject):
     def generate_site_report(
             self,
             metadata: SiteMetadata,
-            project_folder: str
+            project_folder: str,
+            temporal_info: MapTemporalInfo
     ) -> ReportSubmitResult:
         """Initiates the site report generation process.
 
@@ -66,6 +65,9 @@ class ReportManager(QtCore.QObject):
         :param project_folder: Path of the project directory.
         :type project_folder: str
 
+        :param temporal_info: Datetime range in the map canvas.
+        :type temporal_info: MapTemporalInfo
+
         :returns: Returns a result object with the status of the submission.
         :rtype: ReportSubmitResult
         """
@@ -74,7 +76,12 @@ class ReportManager(QtCore.QObject):
             return ReportSubmitResult(False, None, "-1")
 
         feedback = QgsFeedback()
-        context = self.create_site_context(metadata, project_folder, feedback)
+        context = self.create_site_context(
+            metadata,
+            project_folder,
+            feedback,
+            temporal_info
+        )
         if context is None:
             log(
                 f"Contextual information for creating the site report could not be created.",
@@ -152,7 +159,8 @@ class ReportManager(QtCore.QObject):
             cls,
             metadata: SiteMetadata,
             project_folder: str,
-            feedback: QgsFeedback
+            feedback: QgsFeedback,
+            temporal_info: MapTemporalInfo
     ) -> typing.Optional[SiteReportContext]:
         """Creates the contextual information required for generating the report.
 
@@ -165,6 +173,9 @@ class ReportManager(QtCore.QObject):
         :param feedback: Feedback object for providing updates on
         the report generation process.
         :type feedback: QgsFeedback
+
+        :param temporal_info: Datetime range in the map canvas.
+        :type temporal_info: MapTemporalInfo
 
         :returns: Returns a context object containing required
         information for generating the report or None if it
@@ -237,7 +248,8 @@ class ReportManager(QtCore.QObject):
             feedback,
             project_folder,
             report_qgs_project_path,
-            report_template_path
+            report_template_path,
+            temporal_info
         )
 
     def remove_report_task(self, task_id: str) -> bool:

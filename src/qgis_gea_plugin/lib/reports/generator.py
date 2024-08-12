@@ -17,6 +17,7 @@ from qgis.core import (
     QgsMapLayer,
     QgsPrintLayout,
     QgsProject,
+    QgsRasterLayer,
     QgsReadWriteContext,
     QgsRectangle,
     QgsTask,
@@ -28,15 +29,16 @@ from qgis.PyQt import QtCore, QtXml
 from ...definitions.defaults import (
     ADMIN_AREAS_GROUP_NAME,
     DETAILED_ZOOM_OUT_FACTOR,
-    DISTRICTS_NAME_SEGMENT,
     EXCLUSION_MASK_GROUP_NAME,
     GOOGLE_LAYER_NAME,
-    MASK_NAME_SEGMENT,
+    LANDSAT_IMAGERY_GROUP_NAME,
     OVERVIEW_ZOOM_OUT_FACTOR,
+    RECENT_IMAGERY_GROUP_NAME,
+    REPORT_LANDSCAPE_DESCRIPTION_SUFFIX,
     REPORT_SITE_BOUNDARY_STYLE,
     SITE_GROUP_NAME
 )
-from ...models.base import LayerNodeSearch
+from ...models.base import IMAGERY, LayerNodeSearch
 from ...models.report import (
     SiteReportContext,
     ReportOutputResult
@@ -66,6 +68,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         self._base_layout_name = ""
         self._output_report_layout = None
         self._site_layer = None
+        self._landscape_layer = None
 
     @property
     def context(self) -> SiteReportContext:
@@ -222,7 +225,10 @@ class SiteReportReportGeneratorTask(QgsTask):
         if result == QgsLayoutExporter.ExportResult.Success:
             return True
         else:
-            tr_msg = tr("Could not export report to PDF")
+            tr_msg = tr(
+                "Could not export report to PDF. Check if there is PDF "
+                "opened for the same project."
+            )
             self._error_messages.append(f"{tr_msg} {pdf_path}.")
             return False
 
@@ -264,7 +270,12 @@ class SiteReportReportGeneratorTask(QgsTask):
         if self._check_feedback_cancelled_or_set_progress(50):
             return False
 
-        self._set_map_items_zoom_level()
+        self._set_landscape_layer()
+
+        if self._check_feedback_cancelled_or_set_progress(55):
+            return False
+
+        self._configure_map_items_zoom_level()
 
         if self._check_feedback_cancelled_or_set_progress(75):
             return False
@@ -443,90 +454,176 @@ class SiteReportReportGeneratorTask(QgsTask):
 
         self._site_layer = project_site_layer
 
-    def _set_map_items_zoom_level(self):
-        """Set zoom levels of map items."""
-        if self._site_layer is None:
-            tr_msg = tr("Site layer not found or shapefile is invalid.")
+    def _set_landscape_layer(self):
+        """Set the landscape layer i.e. Nicfi or Landsat depending on the
+        information in the TemporalInfo object.
+        """
+        if self._context.temporal_info.image_type == IMAGERY.NICFI:
+            group_name = RECENT_IMAGERY_GROUP_NAME
+        elif self._context.temporal_info.image_type == IMAGERY.HISTORICAL:
+            group_name = LANDSAT_IMAGERY_GROUP_NAME
+        else:
+            group_name = ""
+
+        if not group_name:
+            tr_msg = tr("Landscape group name could not be determined")
             self._error_messages.append(tr_msg)
             return
 
-        site_extent = self._site_layer.extent()
+        layers = self._get_layers_in_group(group_name)
+        if len(layers) == 0:
+            tr_msg = tr("No layers in landscape group")
+            self._error_messages.append(f"{tr_msg}: {group_name}")
+            return
 
-        exclusion_layer = self._get_layer_from_node_name(
-            MASK_NAME_SEGMENT,
-            LayerNodeSearch.CONTAINS,
-            EXCLUSION_MASK_GROUP_NAME
-        )
+        # Search corresponding layers
+        for layer in layers:
+            temporal_properties = layer.temporalProperties()
+            if temporal_properties is None:
+                continue
 
-        district_layer = self._get_layer_from_node_name(
-            DISTRICTS_NAME_SEGMENT,
-            LayerNodeSearch.CONTAINS,
-            ADMIN_AREAS_GROUP_NAME
-        )
+            if not temporal_properties.isActive():
+                continue
 
-        # Overview site map
-        overview_map = self._get_map_item_by_id("site_location_overview_map")
-        if overview_map:
-            # We use this to control the overview extent i.e. ensure we do
-            # not zoom out beyond the national extent.
-            district_extent = None
-            if district_layer:
-                district_extent = self._transform_extent(
-                    district_layer.extent(),
-                    district_layer.crs(),
-                    overview_map.crs()
-                )
+            if not isinstance(layer, QgsRasterLayer):
+                continue
 
-            # Transform extent
-            overview_extent = self._transform_extent(
-                site_extent,
-                self._site_layer.crs(),
-                overview_map.crs()
-            )
-            if overview_extent.isNull():
-                tr_msg = tr("Invalid extent for setting in the overview map.")
-                self._error_messages.append(tr_msg)
-            else:
-                # Zoom out by factor
-                overview_extent.scale(OVERVIEW_ZOOM_OUT_FACTOR)
+            temporal_range = temporal_properties.fixedTemporalRange()
+            if temporal_range == self._context.temporal_info.date_range:
+                self._landscape_layer = layer
 
-                if district_extent:
-                    if district_extent.contains(overview_extent):
-                        overview_map.zoomToExtent(overview_extent)
-                    else:
-                        overview_map.zoomToExtent(district_extent)
+                # Update landscape description label
+                year = temporal_range.begin().date().year()
+                if year == 0:
+                    year_str = ""
                 else:
-                    overview_map.zoomToExtent(overview_extent)
+                    year_str = str(year)
 
-                overview_map.refresh()
+                full_description = f"{group_name} {year_str} " \
+                                   f"{REPORT_LANDSCAPE_DESCRIPTION_SUFFIX}"
+                self.set_label_value(
+                    "landscape_description_label",
+                    full_description
+                )
+                break
 
-        # Detailed site map
-        detailed_map = self._get_map_item_by_id("site_location_detailed_map")
-        detailed_extent = None
-        if detailed_map:
+        if self._landscape_layer is None:
+            tr_msg = tr("Landscape layer not found")
+            self._error_messages.append(f"{tr_msg} under {group_name}")
+
+    def _configure_map_items_zoom_level(self):
+        """Set layers and zoom levels of map items."""
+        if self._site_layer is None:
+            tr_msg = tr("Site layer not found or shapefile is invalid")
+            self._error_messages.append(tr_msg)
+            return
+
+        # Site maps
+        detailed_extent = self._configure_site_maps()
+
+        # Get mask layers
+        mask_layers = self._get_layers_in_group(EXCLUSION_MASK_GROUP_NAME)
+
+        # Landscape maps
+        self._configure_landscape_maps(detailed_extent, mask_layers)
+
+        # Current imagery
+        self._configure_current_maps(detailed_extent, mask_layers)
+
+    def _configure_landscape_maps(
+            self,
+            detailed_extent: QgsRectangle,
+            mask_layers: typing.List[QgsMapLayer]
+    ):
+        """Set the zoom level and layers for the landscape exclusion
+        and inclusion maps.
+
+        :param detailed_extent: Extent to use for the landscape exclusion
+        and inclusion maps.
+        :type detailed_extent: QgsRectangle
+
+        :param mask_layers: Exclusion mask layers
+        :type mask_layers: list
+        """
+        if self._landscape_layer is None:
+            tr_msg = tr(
+                "Landscape layer is missing, landscape maps will not "
+                "be rendered."
+            )
+            self._error_messages.append(tr_msg)
+            return
+
+        # landscape layer with mask map
+        historic_mask_map = self._get_map_item_by_id("historic_mask_map")
+        if historic_mask_map and detailed_extent:
             # Transform extent
-            detailed_extent = self._transform_extent(
-                site_extent,
+            landscape_imagery_extent = self._transform_extent(
+                detailed_extent,
                 self._site_layer.crs(),
-                detailed_map.crs()
+                historic_mask_map.crs()
             )
 
-            if detailed_extent.isNull():
-                tr_msg = tr("Invalid extent for setting in the detailed map.")
+            if landscape_imagery_extent.isNull():
+                tr_msg = tr(
+                    "Invalid extent for setting in the current imagery "
+                    "with mask map"
+                )
                 self._error_messages.append(tr_msg)
             else:
-                theme = detailed_map.followVisibilityPresetName()
-                detailed_map_layers = [self._site_layer]
-                detailed_map_layers.extend(self._get_layers_in_theme(theme))
-                detailed_map.setFollowVisibilityPreset(False)
-                detailed_map.setFollowVisibilityPresetName("")
-                detailed_map.setLayers(detailed_map_layers )
+                landscape_mask_layers = [self._site_layer]
+                landscape_mask_layers.extend(mask_layers)
+                landscape_mask_layers.append(self._landscape_layer)
+                historic_mask_map.setFollowVisibilityPreset(False)
+                historic_mask_map.setFollowVisibilityPresetName("")
+                historic_mask_map.setLayers(landscape_mask_layers)
+                historic_mask_map.zoomToExtent(landscape_imagery_extent)
+                historic_mask_map.refresh()
 
-                # Zoom out by factor
-                detailed_extent.scale(DETAILED_ZOOM_OUT_FACTOR)
-                detailed_map.zoomToExtent(detailed_extent)
+        # Landscape with no-mask map
+        landscape_no_mask_map = self._get_map_item_by_id("historic_no_mask_map")
+        if landscape_no_mask_map and detailed_extent:
+            # Transform extent
+            landscape_no_mask_extent = self._transform_extent(
+                detailed_extent,
+                self._site_layer.crs(),
+                landscape_no_mask_map.crs()
+            )
 
-                detailed_map.refresh()
+            if landscape_no_mask_extent.isNull():
+                tr_msg = tr(
+                    "Invalid extent for setting in the landscape imagery "
+                    "with no-mask map"
+                )
+                self._error_messages.append(tr_msg)
+            else:
+                landscape_no_mask_layers = [
+                    self._site_layer,
+                    self._landscape_layer
+                ]
+
+                landscape_no_mask_map.setFollowVisibilityPreset(False)
+                landscape_no_mask_map.setFollowVisibilityPresetName("")
+                landscape_no_mask_map.setLayers(landscape_no_mask_layers)
+                landscape_no_mask_map.zoomToExtent(landscape_no_mask_extent)
+                landscape_no_mask_map.refresh()
+
+    def _configure_current_maps(
+            self,
+            detailed_extent: QgsRectangle,
+            mask_layers: typing.List[QgsMapLayer]
+    ):
+        """Set the zoom level and layers for the current imagery maps.
+
+        :param detailed_extent: Extent to use for the current maps.
+        :type detailed_extent: QgsRectangle
+
+        :param mask_layers: Exclusion mask layers
+        :type mask_layers: list
+        """
+        google_layer = self._get_layer_from_node_name(
+            GOOGLE_LAYER_NAME,
+            LayerNodeSearch.EXACT_MATCH
+        )
 
         # Current imagery with mask map
         current_mask_map = self._get_map_item_by_id("current_mask_map")
@@ -545,9 +642,9 @@ class SiteReportReportGeneratorTask(QgsTask):
                 )
                 self._error_messages.append(tr_msg)
             else:
-                theme = current_mask_map.followVisibilityPresetName()
                 current_mask_layers = [self._site_layer]
-                current_mask_layers.extend(self._get_layers_in_theme(theme))
+                current_mask_layers.extend(mask_layers)
+                current_mask_layers.append(google_layer)
                 current_mask_map.setFollowVisibilityPreset(False)
                 current_mask_map.setFollowVisibilityPresetName("")
                 current_mask_map.setLayers(current_mask_layers)
@@ -571,14 +668,102 @@ class SiteReportReportGeneratorTask(QgsTask):
                 )
                 self._error_messages.append(tr_msg)
             else:
-                theme = current_no_mask_map.followVisibilityPresetName()
-                current_no_mask_layers = [self._site_layer]
-                current_no_mask_layers.extend(self._get_layers_in_theme(theme))
+                current_no_mask_layers = [self._site_layer, google_layer]
                 current_no_mask_map.setFollowVisibilityPreset(False)
                 current_no_mask_map.setFollowVisibilityPresetName("")
                 current_no_mask_map.setLayers(current_no_mask_layers)
                 current_no_mask_map.zoomToExtent(current_no_mask_imagery_extent)
                 current_no_mask_map.refresh()
+
+    def _configure_site_maps(self) -> QgsRectangle:
+        """Set the zoom level and layers for the overview and detailed maps.
+
+        :returns: Returns the extent of the detailed map.
+        :rtype: QgsRectangle
+        """
+        site_extent = self._site_layer.extent()
+
+        google_layer = self._get_layer_from_node_name(
+            GOOGLE_LAYER_NAME,
+            LayerNodeSearch.EXACT_MATCH
+        )
+
+        map_item_layers = [self._site_layer]
+
+        ref_admin_layer = None
+        admin_layers = self._get_layers_in_group(ADMIN_AREAS_GROUP_NAME)
+        if len(admin_layers) > 0:
+            ref_admin_layer = admin_layers[0]
+            map_item_layers.extend(admin_layers)
+
+        if google_layer:
+            # We want the Google layer as the last item
+            map_item_layers.extend([google_layer])
+
+        # Overview map
+        overview_map = self._get_map_item_by_id("site_location_overview_map")
+        if overview_map:
+            # We use the admin layer to control the overview extent i.e.
+            # ensure we do not zoom out beyond the national extent.
+            admin_extent = None
+            if ref_admin_layer:
+                admin_extent = self._transform_extent(
+                    ref_admin_layer.extent(),
+                    ref_admin_layer.crs(),
+                    overview_map.crs()
+                )
+
+            # Transform extent
+            overview_extent = self._transform_extent(
+                site_extent,
+                self._site_layer.crs(),
+                overview_map.crs()
+            )
+            if overview_extent.isNull():
+                tr_msg = tr("Invalid extent for setting in the overview map.")
+                self._error_messages.append(tr_msg)
+            else:
+                # Zoom out by factor
+                overview_extent.scale(OVERVIEW_ZOOM_OUT_FACTOR)
+
+                if admin_extent:
+                    if admin_extent.contains(overview_extent):
+                        overview_map.zoomToExtent(overview_extent)
+                    else:
+                        overview_map.zoomToExtent(admin_extent)
+                else:
+                    overview_map.zoomToExtent(overview_extent)
+
+                overview_map.setFollowVisibilityPreset(False)
+                overview_map.setFollowVisibilityPresetName("")
+                overview_map.setLayers(map_item_layers)
+                overview_map.refresh()
+
+        # Detailed site map
+        detailed_map = self._get_map_item_by_id("site_location_detailed_map")
+        detailed_extent = None
+        if detailed_map:
+            # Transform extent
+            detailed_extent = self._transform_extent(
+                site_extent,
+                self._site_layer.crs(),
+                detailed_map.crs()
+            )
+
+            if detailed_extent.isNull():
+                tr_msg = tr("Invalid extent for setting in the detailed map.")
+                self._error_messages.append(tr_msg)
+            else:
+                detailed_map.setFollowVisibilityPreset(False)
+                detailed_map.setFollowVisibilityPresetName("")
+                detailed_map.setLayers(map_item_layers)
+
+                # Zoom out by factor
+                detailed_extent.scale(DETAILED_ZOOM_OUT_FACTOR)
+                detailed_map.zoomToExtent(detailed_extent)
+                detailed_map.refresh()
+
+        return detailed_extent
 
     def _get_layers_in_theme(self, theme_name: str) -> typing.List[QgsMapLayer]:
         """Returns the visible map layers in the given theme.
@@ -595,6 +780,25 @@ class SiteReportReportGeneratorTask(QgsTask):
             return []
 
         return [record.layer() for record in theme.layerRecords()]
+
+    def _get_layers_in_group(self, group_name: str) -> typing.List[QgsMapLayer]:
+        """Gets all the map layers in a group node.
+
+        :param group_name: Group name to retrieve the layers.
+        :type group_name: str
+
+        :returns: Returns all the layers in the given group or an
+        empty list if the group was not found or does not contain
+        any layers.
+        :rtype: list
+        """
+        root_tree = self._project.layerTreeRoot()
+
+        search_group = root_tree.findGroup(group_name)
+        if search_group is None:
+            return []
+
+        return [tree_layer.layer() for tree_layer in search_group.findLayers()]
 
     def _transform_extent(
             self,

@@ -3,10 +3,11 @@
 """ Data models for report production."""
 
 import dataclasses
-from datetime import date, datetime
 import typing
 
 from qgis.core import QgsFeedback
+
+from .base import MapTemporalInfo
 
 
 @dataclasses.dataclass
@@ -51,6 +52,7 @@ class SiteReportContext:
     project_dir: str
     qgs_project_path: str
     template_path: str
+    temporal_info: MapTemporalInfo
 
     @property
     def report_dir(self) -> str:
