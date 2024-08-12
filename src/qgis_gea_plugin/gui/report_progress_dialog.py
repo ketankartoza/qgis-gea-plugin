@@ -97,7 +97,11 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         """Slot raised when an error occurred."""
         self.btn_open_pdf.setEnabled(False)
         self._set_close_state()
-        self.lbl_message.setText(tr("Error occurred during report generation"))
+        tr_msg = tr(
+            "Error occurred during report generation. "
+            "\nSee logs for more information"
+        )
+        self.lbl_message.setText(tr_msg)
 
         log(tr("Error generating report, see logs for more info."))
 
