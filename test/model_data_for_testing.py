@@ -33,7 +33,7 @@ def get_site_metadata() -> SiteMetadata:
     return SiteMetadata(
         "Malawi",
         "0824",
-        "RNJ"
+        "RNJ",
         "TAMP",
         "2.87",
         "TAMP_GTI-GEA-Malawi 2_Malawi_120824",
