@@ -424,12 +424,14 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                         f"{self.country_cmb_box.currentText()}_"
                         f"{self.capture_date}")
 
-        self.drawing_layer_path = f"{os.path.join(sites_path, clean_filename(area_name))}.shp"
+        unique_area_name = f"{area_name}_{str(uuid.uuid4())[:4]}"
+
+        self.drawing_layer_path = f"{os.path.join(sites_path, clean_filename(unique_area_name))}.shp"
 
         # Create a new layer with multipolygon geometry
         self.drawing_layer = QgsVectorLayer(
             f"MultiPolygon?crs={crs_id}",
-            f"{area_name}",
+            unique_area_name,
             "memory"
         )
 
@@ -547,8 +549,14 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 layer.setEditorWidgetSetup(idx, config)
 
     def save_area(self):
-
         selected_date_time = self.project_inception_date.dateTime()
+
+        if self.drawing_layer is None:
+            self.show_message(
+                tr("Please add the project area layer before saving the project area"),
+                Qgis.Warning
+            )
+            return
 
         if selected_date_time is None:
             self.show_message(
@@ -592,7 +600,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         features = self.drawing_layer.getFeatures()
         first_feature = next(features, None)  # Retrieve the first feature
 
-
         if first_feature:
             feature_area = None
             geom = first_feature.geometry()
@@ -617,13 +624,24 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             options.driverName = "ESRI Shapefile"
             options.fileEncoding = "UTF-8"
 
+            area_name = (f"{self.site_reference_le.text()}_"
+                         f"{QgsProject.instance().baseName()}_"
+                         f"{self.country_cmb_box.currentText()}_"
+                         f"{self.capture_date}_"
+                         f"{str(uuid.uuid4())[:4]}")
+
+            folder_path = self.project_folder.filePath()
+            sites_path = os.path.join(folder_path, 'sites')
+
+            layer_path = f"{os.path.join(sites_path, clean_filename(area_name))}.shp"
+
             error, error_message = QgsVectorFileWriter.writeAsVectorFormatV2(
-                self.drawing_layer, self.drawing_layer_path, transform_context, options
+                self.drawing_layer, layer_path, transform_context, options
             )
             if error == QgsVectorFileWriter.NoError:
                 saved_layer = QgsVectorLayer(
-                    self.drawing_layer_path,
-                    self.drawing_layer.name(),
+                    layer_path,
+                    area_name,
                     "ogr"
                 )
 
@@ -639,14 +657,18 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                         Qgis.Critical
                     )
 
-                group.insertLayer(0, saved_layer)
+                # Activate the drawing layer in order to direct add the saved layer
+                # into the same group
+                self.iface.setActiveLayer(self.drawing_layer)
+
+                QgsProject.instance().addMapLayers([saved_layer])
 
                 QgsProject.instance().removeMapLayer(
                     self.drawing_layer
                 )
 
-                self.drawing_layer = saved_layer
-                self.drawing_layer.setReadOnly(True)
+                self.drawing_layer = None
+                saved_layer.setReadOnly(True)
 
                 self.iface.mapCanvas().refresh()
                 self.show_message(
