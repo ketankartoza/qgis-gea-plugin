@@ -18,6 +18,7 @@ from qgis.core import (
     QgsEditorWidgetSetup,
     QgsField,
     QgsInterval,
+    QgsLayerTreeGroup,
     QgsProject,
     QgsTemporalNavigationObject,
     QgsUnitTypes,
@@ -145,8 +146,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         )
         self.prepare_time_slider()
 
-        self.historical_imagery.toggled.connect(self.prepare_time_slider)
-        self.nicfi_imagery.toggled.connect(self.prepare_time_slider)
+        self.historical_imagery.toggled.connect(self.historical_imagery_toggled)
+        self.nicfi_imagery.toggled.connect(self.nicfi_imagery_toggled)
 
         self.play_btn.clicked.connect(self.animate_layers)
 
@@ -294,31 +295,41 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.play_btn.setToolTip(tr("Pause animation"))
             self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PAUSE_ICON))
 
-    def prepare_time_slider(self):
+    def historical_imagery_toggled(self):
+
+        if self.historical_imagery.isChecked():
+            settings_manager.set_value(Settings.HISTORICAL_VIEW, True)
+            settings_manager.set_value(Settings.NICFI_VIEW, False)
+            self.nicfi_imagery.setChecked(False)
+
+            self.current_imagery_type = IMAGERY.HISTORICAL
+            closed_imagery = IMAGERY.NICFI
+
+            self.prepare_time_slider(closed_imagery)
+        else:
+            settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
+
+    def nicfi_imagery_toggled(self):
+        if self.nicfi_imagery.isChecked():
+            self.historical_imagery.setChecked(False)
+
+            settings_manager.set_value(Settings.NICFI_VIEW, True)
+            settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
+
+            self.current_imagery_type = IMAGERY.NICFI
+            closed_imagery = IMAGERY.HISTORICAL
+            self.prepare_time_slider(closed_imagery)
+        else:
+            settings_manager.set_value(Settings.NICFI_VIEW, False)
+
+
+    def prepare_time_slider(self, closed_imagery=None):
         """
         Prepare the time slider based on current selected imagery type.
         """
         values = []
         set_layer = None
         active_layer = None
-
-        closed_imagery = None
-
-        if self.historical_imagery.isChecked():
-            settings_manager.set_value(Settings.HISTORICAL_VIEW, True)
-            settings_manager.set_value(Settings.NICFI_VIEW, False)
-
-            self.current_imagery_type = IMAGERY.HISTORICAL
-            closed_imagery = IMAGERY.NICFI
-        elif self.nicfi_imagery.isChecked():
-            settings_manager.set_value(Settings.NICFI_VIEW, True)
-            settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
-
-            self.current_imagery_type = IMAGERY.NICFI
-            closed_imagery = IMAGERY.HISTORICAL
-        else:
-            settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
-            settings_manager.set_value(Settings.NICFI_VIEW, False)
 
         layers = QgsProject.instance().mapLayers()
         for path, layer in layers.items():
@@ -451,15 +462,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         root = QgsProject.instance().layerTreeRoot()
 
         # Find or create the group
-        group = None
-        for layer_group in root.findGroups():
-            if layer_group.name().lower() == SITE_GROUP_NAME.lower():
-                group = layer_group
-                break
+        group = self.find_group_by_name(SITE_GROUP_NAME, root)
 
         if not group:
             group = root.addGroup(SITE_GROUP_NAME)
-
 
         # Add the layer to the group
         group.addLayer(self.drawing_layer)
@@ -515,6 +521,21 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     def layer_editing_stopped(self):
         self.feature_count = 0
+
+    def find_group_by_name(self, group_name, root_group=None):
+        if root_group is None:
+            root_group = QgsProject.instance().layerTreeRoot()
+
+        if root_group.name() == group_name:
+            return root_group
+
+        for child in root_group.children():
+            if isinstance(child, QgsLayerTreeGroup):
+                result = self.find_group_by_name(group_name, child)
+                if result is not None:
+                    return result
+
+        return None
 
     # Disable editing for specific fields
     def update_field_editing(self, layer, field_names, enabled):
@@ -600,7 +621,34 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 self.drawing_layer, self.drawing_layer_path, transform_context, options
             )
             if error == QgsVectorFileWriter.NoError:
+                saved_layer = QgsVectorLayer(
+                    self.drawing_layer_path,
+                    self.drawing_layer.name(),
+                    "ogr"
+                )
+
+                root = QgsProject.instance().layerTreeRoot()
+                group = self.find_group_by_name(SITE_GROUP_NAME, root)
+
+                if group is None:
+                    group = root.addGroup(SITE_GROUP_NAME)
+
+                if not saved_layer.isValid():
+                    self.show_message(
+                        tr("Problem saving the project area layer."),
+                        Qgis.Critical
+                    )
+
+                group.insertLayer(0, saved_layer)
+
+                QgsProject.instance().removeMapLayer(
+                    self.drawing_layer
+                )
+
+                self.drawing_layer = saved_layer
                 self.drawing_layer.setReadOnly(True)
+
+                self.iface.mapCanvas().refresh()
                 self.show_message(
                     tr(f"Successfully saved the project area polygon to {self.drawing_layer_path}."),
                     Qgis.Info
