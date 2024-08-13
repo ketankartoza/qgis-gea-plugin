@@ -4,10 +4,12 @@
 The plugin main window class file.
 """
 import os
+import pathlib
+import typing
 
 import uuid
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # QGIS imports
 from qgis.PyQt import QtCore, QtGui, QtNetwork, QtWidgets
@@ -745,10 +747,96 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         )
         self.dock_widget_contents.layout().insertLayout(0, self.grid_layout)
 
+    def get_latest_site_layer(self) -> typing.Optional[QgsVectorLayer]:
+        """Gets the latest saved layer in the 'sites' folder.
+
+        Caller needs to check validity of the layer.
+
+        :returns: Returns the latest saved layer in the
+        'sites' folder.
+        :rtype: QgsVectorLayer
+        """
+        sites_dir = os.path.join(self.project_folder.filePath(), 'sites')
+        if not os.path.exists(sites_dir):
+            log(message="Sites directory does not exist.", info=False)
+            return None
+
+        matching_paths = []
+        iteration_control = 50
+        counter = 0
+        save_date = datetime.now()
+        while True:
+            if counter == iteration_control:
+                break
+
+            pattern = f"*{save_date.strftime('%d%m%y')}.shp"
+            paths = list(pathlib.Path(sites_dir).glob(pattern))
+            if len(paths) > 0:
+                matching_paths = list(paths)
+                break
+
+            save_date = save_date - timedelta(days=1)
+            counter += 1
+
+        if len(matching_paths) == 0:
+            log(message="Project area not found in sites directory.", info=False)
+            return None
+
+        layer_path = matching_paths[0]
+
+        return QgsVectorLayer(
+            str(layer_path),
+            layer_path.stem,
+            "ogr"
+        )
+
     def on_generate_report(self):
         """Slot raised to initiate the generation of a site report."""
         if not self.is_project_info_valid():
             return
+
+        # Get last saved layer
+        site_layer = self.get_latest_site_layer()
+        if site_layer is None:
+            tr_msg = tr("Unable to retrieve the saved project area.")
+            QtWidgets.QMessageBox.critical(
+                self,
+                self.tr("Generate Report"),
+                tr_msg
+            )
+            log(message=tr_msg, info=False)
+            return
+
+        if not site_layer.isValid():
+            tr_msg = tr("The last saved project area is invalid.")
+            QtWidgets.QMessageBox.critical(
+                self,
+                self.tr("Generate Report"),
+                tr_msg
+            )
+            log(message=tr_msg, info=False)
+            return
+
+        features = list(site_layer.getFeatures())
+        if len(features) == 0:
+            tr_msg = tr("The saved project area is empty.")
+            QtWidgets.QMessageBox.critical(
+                self,
+                self.tr("Generate Report"),
+                tr_msg
+            )
+            log(message=tr_msg, info=False)
+            return
+
+        # Get capture date and area
+        feature = features[0]
+
+        # If shapefile, some attribute names are truncated
+        capture_date = feature["capture_da"]
+        area = feature["area (ha)"]
+
+        if self.capture_date is None:
+            self.capture_date = capture_date
 
         metadata = SiteMetadata(
             self.country_cmb_box.currentText(),
@@ -757,8 +845,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.site_reference_le.text(),
             self.site_ref_version_le.text(),
             self._get_area_name(),
-            self.capture_date,
-            self.last_computed_area
+            capture_date,
+            area
         )
 
         if not self.historical_imagery.isChecked() and not self.nicfi_imagery.isChecked():
