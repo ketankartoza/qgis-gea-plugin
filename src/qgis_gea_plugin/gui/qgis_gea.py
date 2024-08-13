@@ -172,6 +172,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.drawing_layer = None
         self.drawing_layer_path = None
 
+        self.saved_layer = None
+
         self.feature_count = 0
 
         self.iface.projectRead.connect(self.prepare_time_slider)
@@ -524,6 +526,42 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                      f"{self.capture_date}")
         return area_name
 
+    def is_project_info_valid(self) -> bool:
+        """Validates user input.
+        :returns: Returns True if the input is valid, else False.
+        :rtype: bool
+        """
+
+        selected_date_time = self.project_inception_date.dateTime()
+
+        if selected_date_time is None:
+            self.show_message(
+                tr("Please add the project inception date before saving the project area"),
+                Qgis.Warning
+            )
+            return False
+        if self.site_reference_le.text() is None or self.site_reference_le.text().replace(' ', '') is '':
+            self.show_message(
+                tr("Please add the site reference before saving the project area"),
+                Qgis.Warning
+            )
+            return False
+        if self.report_author_le.text() is None or self.report_author_le.text().replace(' ', '') is '':
+            self.show_message(
+                tr("Please add the report generation author before saving the project area"),
+                Qgis.Warning
+            )
+            return False
+        if self.site_ref_version_le.text() is None or self.site_ref_version_le.text().replace(' ', '') is '':
+            self.show_message(
+                tr("Please add the site reference version before saving the project area"),
+                Qgis.Warning
+            )
+            return False
+
+        return True
+
+
     def layer_feature_added(self, id):
         self.feature_count += 1
         if self.feature_count > 1:
@@ -575,32 +613,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
             return
 
-        selected_date_time = self.project_inception_date.dateTime()
+        if not self.is_project_info_valid():
+            return
 
-        if selected_date_time is None:
-            self.show_message(
-                tr("Please add the project inception date before saving the project area"),
-                Qgis.Warning
-            )
-            return False
-        if self.site_reference_le.text() is None or self.site_reference_le.text().replace(' ', '') is '':
-            self.show_message(
-                tr("Please add the site reference before saving the project area"),
-                Qgis.Warning
-            )
-            return False
-        if self.report_author_le.text() is None or self.report_author_le.text().replace(' ', '') is '':
-            self.show_message(
-                tr("Please add the report generation author before saving the project area"),
-                Qgis.Warning
-            )
-            return False
-        if self.site_ref_version_le.text() is None or self.site_ref_version_le.text().replace(' ', '') is '':
-            self.show_message(
-                tr("Please add the site reference version before saving the project area"),
-                Qgis.Warning
-            )
-            return False
+        selected_date_time = self.project_inception_date.dateTime()
 
         # List of fields to enable editing on
         fields_to_enable = [
@@ -645,11 +661,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             options.driverName = "ESRI Shapefile"
             options.fileEncoding = "UTF-8"
 
-            area_name = (f"{self.site_reference_le.text()}_"
-                         f"{QgsProject.instance().baseName()}_"
-                         f"{self.country_cmb_box.currentText()}_"
-                         f"{self.capture_date}_"
-                         f"{str(uuid.uuid4())[:4]}")
+            area_name = f"{self._get_area_name()}_{str(uuid.uuid4())[:4]}"
 
             folder_path = self.project_folder.filePath()
             sites_path = os.path.join(folder_path, 'sites')
@@ -665,12 +677,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     area_name,
                     "ogr"
                 )
-
-                root = QgsProject.instance().layerTreeRoot()
-                group = self.find_group_by_name(SITE_GROUP_NAME, root)
-
-                if group is None:
-                    group = root.addGroup(SITE_GROUP_NAME)
 
                 if not saved_layer.isValid():
                     self.show_message(
@@ -688,7 +694,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     self.drawing_layer
                 )
 
-                self.drawing_layer = None
+                self.saved_layer = saved_layer
                 saved_layer.setReadOnly(True)
 
                 self.iface.mapCanvas().refresh()
@@ -756,6 +762,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         'sites' folder.
         :rtype: QgsVectorLayer
         """
+        if self.saved_layer:
+            return self.saved_layer
+
         sites_dir = os.path.join(self.project_folder.filePath(), 'sites')
         if not os.path.exists(sites_dir):
             log(message="Sites directory does not exist.", info=False)

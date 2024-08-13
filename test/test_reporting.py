@@ -5,7 +5,7 @@ Unit test for report framework.
 import os
 from unittest import TestCase
 
-from qgis.core import QgsFeedback
+from qgis.core import QgsFeedback, QgsProject
 
 from qgis.PyQt import QtCore
 
@@ -27,6 +27,8 @@ class TestReportManager(TestCase):
         rpm = ReportManager()
         site_metadata = get_site_metadata()
         temporal_info = get_temporal_info()
+
+        QgsProject.instance().write('test.qgz')
 
         temp_dir = QtCore.QTemporaryDir()
         self.assertTrue(temp_dir.isValid())
