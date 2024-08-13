@@ -43,4 +43,4 @@ COUNTRY_NAMES = [
     "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ]
 
-SITE_GROUP_NAME = "Proposed site boundaries"
+SITE_GROUP_NAME = "Proposed Site Boundaries"
