@@ -19,6 +19,7 @@ from qgis.core import (
     Qgis,
     QgsEditorWidgetSetup,
     QgsField,
+    QgsFillSymbol,
     QgsInterval,
     QgsLayerTreeGroup,
     QgsProject,
@@ -35,8 +36,9 @@ from ..definitions.defaults import (
     ANIMATION_PAUSE_ICON,
     ANIMATION_PLAY_ICON,
     COUNTRY_NAMES,
+    PLUGIN_ICON,
+    REPORT_SITE_BOUNDARY_STYLE,
     SITE_GROUP_NAME,
-    PLUGIN_ICON
 )
 from ..gui.report_progress_dialog import ReportProgressDialog
 from ..lib.reports.manager import report_manager
@@ -224,6 +226,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.project_folder.setFilePath(settings_manager.get_value(Settings.PROJECT_FOLDER))
         else:
             self.project_folder.setFilePath(QgsProject.instance().homePath())
+            create_dir(os.path.join(self.project_folder.filePath(), 'sites'))
 
     def project_folder_changed(self):
 
@@ -491,6 +494,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             layer_tree_layer.setItemVisibilityChecked(True)
             self.iface.setActiveLayer(self.drawing_layer)
 
+        site_symbol = QgsFillSymbol.createSimple(REPORT_SITE_BOUNDARY_STYLE)
+        self.drawing_layer.renderer().setSymbol(site_symbol)
+        self.drawing_layer.triggerRepaint()
+
         # Toggle layer editing
         self.drawing_layer.startEditing()
 
@@ -605,10 +612,22 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 layer.setEditorWidgetSetup(idx, config)
 
     def save_area(self):
+        """
+        Saves the project area polygon to a shapefile and updates
+        the relevant attributes.
+
+        Calculates the area of the first feature, updates attributes
+        like site reference and dates, and commits the changes.
+        The layer is saved as a shapefile, added to the QGIS project
+        and the original drawing layer is removed.
+        The saved layer is set to read-only, the main map canvas
+        refreshed and the whole project is saved.
+        """
 
         if self.drawing_layer is None:
             self.show_message(
-                tr("Please add the project area layer before saving the project area"),
+                tr("Please add the project area layer"
+                   " before saving the project area"),
                 Qgis.Warning
             )
             return
@@ -695,15 +714,25 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 )
 
                 self.saved_layer = saved_layer
+
+                site_symbol = QgsFillSymbol.createSimple(REPORT_SITE_BOUNDARY_STYLE)
+                saved_layer.renderer().setSymbol(site_symbol)
+                saved_layer.triggerRepaint()
+
                 saved_layer.setReadOnly(True)
 
                 self.iface.mapCanvas().refresh()
+                settings_manager.set_value(Settings.LAST_SITE_LAYER_PATH, layer_path)
+
+                QgsProject.instance().write()
+
                 self.show_message(
                     tr(f"Successfully saved the project area polygon to {self.drawing_layer_path}."),
                     Qgis.Info
                 )
             else:
-                self.show_message(tr(f"Error project area polygon layer: {error_message}"), Qgis.Warning)
+                self.show_message(tr(f"Error saving project area polygon layer: {error}"), Qgis.Warning)
+                log(tr(f"Error saving project area polygon layer: {error}, {error_message}, layer path {layer_path}"))
 
 
     def cancel_drawing(self):
@@ -760,8 +789,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         )
         self.dock_widget_contents.layout().insertLayout(0, self.grid_layout)
 
-    def get_latest_site_layer(self) -> typing.Optional[QgsVectorLayer]:
-        """Gets the latest saved layer in the 'sites' folder.
+    def get_site_layer(self) -> typing.Optional[QgsVectorLayer]:
+        """Gets the required site layer.
 
         Caller needs to check validity of the layer.
 
@@ -769,36 +798,36 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         'sites' folder.
         :rtype: QgsVectorLayer
         """
-        if self.saved_layer:
-            return self.saved_layer
 
-        sites_dir = os.path.join(self.project_folder.filePath(), 'sites')
-        if not os.path.exists(sites_dir):
-            log(message="Sites directory does not exist.", info=False)
+        selected_layer = self.iface.activeLayer()
+
+        if selected_layer is not None:
+            layer_node = (QgsProject.instance().layerTreeRoot().
+                          findLayer(selected_layer.id()))
+            if layer_node is not None:
+                parent_group = layer_node.parent()
+
+                if (parent_group is not None and
+                        parent_group.name() == SITE_GROUP_NAME):
+                    return selected_layer
+
+        sites_layer_path = settings_manager.get_value(
+            Settings.LAST_SITE_LAYER_PATH,
+            default=""
+        )
+
+        if not os.path.exists(sites_layer_path):
+            self.show_message(
+                tr("The last saved site layer path does not exist."),
+                Qgis.Critical
+            )
+            log(
+                message="The last saved site layer path does not exist.",
+                info=False
+            )
             return None
 
-        matching_paths = []
-        iteration_control = 50
-        counter = 0
-        save_date = datetime.now()
-        while True:
-            if counter == iteration_control:
-                break
-
-            pattern = f"*{save_date.strftime('%d%m%y')}.shp"
-            paths = list(pathlib.Path(sites_dir).glob(pattern))
-            if len(paths) > 0:
-                matching_paths = list(paths)
-                break
-
-            save_date = save_date - timedelta(days=1)
-            counter += 1
-
-        if len(matching_paths) == 0:
-            log(message="Project area not found in sites directory.", info=False)
-            return None
-
-        layer_path = matching_paths[0]
+        layer_path = pathlib.Path(sites_layer_path)
 
         return QgsVectorLayer(
             str(layer_path),
@@ -812,7 +841,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             return
 
         # Get last saved layer
-        site_layer = self.get_latest_site_layer()
+        site_layer = self.get_site_layer()
         if site_layer is None:
             tr_msg = tr("Unable to retrieve the saved project area.")
             QtWidgets.QMessageBox.critical(
