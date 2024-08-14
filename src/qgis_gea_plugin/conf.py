@@ -57,6 +57,8 @@ class Settings(enum.Enum):
     ANIMATION_FRAME_RATE = 'frame_rate'
     ANIMATION_LOOP = 'animation_loop'
 
+    LAST_SITE_LAYER_PATH = 'last_site_layer_path'
+
 
 class SettingsManager(QtCore.QObject):
     """Manages saving/loading settings for the plugin in QgsSettings."""
