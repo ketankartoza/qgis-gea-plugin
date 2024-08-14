@@ -224,6 +224,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.project_folder.setFilePath(settings_manager.get_value(Settings.PROJECT_FOLDER))
         else:
             self.project_folder.setFilePath(QgsProject.instance().homePath())
+            create_dir(os.path.join(self.project_folder.filePath(), 'sites'))
 
     def project_folder_changed(self):
 
@@ -703,7 +704,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     Qgis.Info
                 )
             else:
-                self.show_message(tr(f"Error project area polygon layer: {error_message}"), Qgis.Warning)
+                self.show_message(tr(f"Error saving project area polygon layer: {error}"), Qgis.Warning)
+                log(tr(f"Error saving project area polygon layer: {error}, {error_message}, layer path {layer_path}"))
 
 
     def cancel_drawing(self):
