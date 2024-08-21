@@ -710,6 +710,11 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 # into the same group
                 self.iface.setActiveLayer(self.drawing_layer)
 
+                site_symbol = QgsFillSymbol.createSimple(
+                    REPORT_SITE_BOUNDARY_STYLE
+                )
+                saved_layer.renderer().setSymbol(site_symbol)
+
                 QgsProject.instance().addMapLayers([saved_layer])
 
                 QgsProject.instance().removeMapLayer(
@@ -718,24 +723,31 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
                 self.saved_layer = saved_layer
 
-                site_symbol = QgsFillSymbol.createSimple(REPORT_SITE_BOUNDARY_STYLE)
-                saved_layer.renderer().setSymbol(site_symbol)
-                saved_layer.triggerRepaint()
-
                 saved_layer.setReadOnly(True)
 
                 self.iface.mapCanvas().refresh()
-                settings_manager.set_value(Settings.LAST_SITE_LAYER_PATH, layer_path)
+                settings_manager.set_value(
+                    Settings.LAST_SITE_LAYER_PATH,
+                    layer_path
+                )
 
                 QgsProject.instance().write()
 
                 self.show_message(
-                    tr(f"Successfully saved the project area polygon to {self.drawing_layer_path}."),
+                    tr(f"Successfully saved the project area polygon to "
+                       f"{self.drawing_layer_path}."),
                     Qgis.Info
                 )
             else:
-                self.show_message(tr(f"Error saving project area polygon layer: {error}"), Qgis.Warning)
-                log(tr(f"Error saving project area polygon layer: {error}, {error_message}, layer path {layer_path}"))
+                self.show_message(
+                    tr(f"Error saving project area polygon layer: {error}"),
+                    Qgis.Warning
+                )
+                log(
+                    tr(f"Error saving project area polygon layer: "
+                       f"{error}, {error_message}, layer path "
+                       f"{layer_path}")
+                )
 
 
     def cancel_drawing(self):
@@ -933,5 +945,3 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.report_progress_dialog = ReportProgressDialog(submit_result)
         self.report_progress_dialog.setModal(False)
         self.report_progress_dialog.show()
-
-
