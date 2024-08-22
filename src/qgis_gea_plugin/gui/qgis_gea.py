@@ -181,16 +181,32 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.iface.projectRead.connect(self.prepare_time_slider)
 
     def animation_loop_toggled(self, value):
+        """
+        Handles the toggling of the animation loop checkbox.
+
+        :param value: Indicates whether the loop checkbox is checked or unchecked.
+        :type value: bool
+         """
         self.save_settings()
         self.navigation_object.setLooping(value)
 
     def frame_rate_changed(self, value):
+        """
+        Handles changes to the animation frame rate.
+
+        :param value: The new frame rate value.
+        :type value: float
+        """
         self.save_settings()
         self.navigation_object.setFramesPerSecond(
             value
         )
 
     def save_settings(self):
+        """
+        Saves the current settings to the QGIS plugins
+         using the settings manager.
+        """
 
         settings_manager.set_value(Settings.SITE_REFERENCE, self.site_reference_le.text())
         settings_manager.set_value(Settings.SITE_VERSION, self.site_ref_version_le.text())
@@ -209,6 +225,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         settings_manager.set_value(Settings.ANIMATION_LOOP, self.loop_box.isChecked())
 
     def restore_settings(self):
+        """
+        Restores the settings from the settings manager and updates the
+        corresponding GUI widgets.
+        """
         self.site_reference_le.setText(settings_manager.get_value(Settings.SITE_REFERENCE))
         self.site_ref_version_le.setText(settings_manager.get_value(Settings.SITE_VERSION))
         self.report_author_le.setText(settings_manager.get_value(Settings.REPORT_AUTHOR))
@@ -229,7 +249,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             create_dir(os.path.join(self.project_folder.filePath(), 'sites'))
 
     def project_folder_changed(self):
-
+        """
+        Handles changes to the project folder path.
+        """
         self.dir_exists()
         create_dir(os.path.join(self.project_folder.filePath(), 'sites'))
         self.save_settings()
@@ -310,7 +332,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.play_btn.setIcon(QtGui.QIcon(ANIMATION_PAUSE_ICON))
 
     def historical_imagery_toggled(self):
-
+        """
+        Handles the toggling of the historical imagery checkbox.
+        """
         if self.historical_imagery.isChecked():
             settings_manager.set_value(Settings.HISTORICAL_VIEW, True)
             settings_manager.set_value(Settings.NICFI_VIEW, False)
@@ -324,6 +348,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             settings_manager.set_value(Settings.HISTORICAL_VIEW, False)
 
     def nicfi_imagery_toggled(self):
+        """
+        Hanldes the toggling of the NICFI imagery checkbox.
+        """
         if self.nicfi_imagery.isChecked():
             self.historical_imagery.setChecked(False)
 
@@ -339,7 +366,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     def prepare_time_slider(self, closed_imagery=None):
         """
-        Prepare the time slider based on current selected imagery type.
+        Prepare the time slider based on the current selected imagery type.
+
+        :param closed_imagery: The imagery type that was deselected. Defaults to None.
+        :type closed_imagery: IMAGERY, optional
         """
         values = []
         set_layer = None
@@ -523,7 +553,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.iface.actionAddFeature().trigger()
 
     def _get_area_name(self):
-        """Get the area name.
+        """Get the area name based on the
+         current project and plugin settings.
 
         :returns: Returns the area name.
         :rtype: str
@@ -571,6 +602,13 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
 
     def layer_feature_added(self, id):
+        """
+        Handles the addition of a new feature to the
+        current drawn layer.
+
+        :param id: The ID of the newly added feature.
+        :type id: int
+        """
         self.feature_count += 1
         if self.feature_count > 1:
             self.drawing_layer.deleteFeature(id)
@@ -586,9 +624,27 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 Qgis.Info)
 
     def layer_editing_stopped(self):
+        """
+        Resets the feature count tracking that is used to
+        determine if user should continue to add features to the
+        site project area.
+        """
         self.feature_count = 0
 
     def find_group_by_name(self, group_name, root_group=None):
+        """
+        Find a group in the layer tree by its name.
+
+        :param group_name: The name of the group to find.
+        :type group_name: str
+
+        :param root_group: The root group to start searching from.
+                            Defaults to the root of the project.
+        :type root_group: QgsLayerTreeGroup
+
+        :returns: The group if found.
+        :rtype: QgsLayerTreeGroup
+        """
         if root_group is None:
             root_group = QgsProject.instance().layerTreeRoot()
 
@@ -764,6 +820,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
 
     def cancel_drawing(self):
+        """
+        Cancels the drawing process, clear the project input fields and area.
+        """
 
         self.site_reference_le.setText(None)
         self.site_ref_version_le.setText(None)
@@ -849,6 +908,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         )
 
         if not os.path.exists(sites_layer_path):
+            print("Layer path-", sites_layer_path)
             self.show_message(
                 tr("The last saved site layer path does not exist."),
                 Qgis.Critical
