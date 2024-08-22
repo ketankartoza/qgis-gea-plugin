@@ -1,8 +1,17 @@
+import os
+
 import unittest
 from qgis.PyQt.QtCore import Qt, QDateTime
 from qgis.PyQt.QtTest import QTest
 
-from qgis.core import QgsDateTimeRange, QgsInterval, QgsUnitTypes, QgsTemporalNavigationObject
+from qgis.core import (
+    QgsDateTimeRange,
+    QgsInterval,
+    QgsProject,
+    QgsTemporalNavigationObject,
+    QgsUnitTypes,
+    QgsVectorFileWriter,
+)
 from qgis.gui import QgsMapCanvas
 
 from qgis.utils import plugins, iface
@@ -89,21 +98,51 @@ class TestQgisGeaPlugin(unittest.TestCase):
         """
         Test preparation of time slider UI components.
         """
-        # self.plugin_dock.historical_imagery.setChecked(True)
-        # self.plugin_dock.nicfi_imagery.setChecked(False)
-        #
-        # self.plugin_dock.prepare_time_slider()
-        #
-        # # Check if the current imagery type is set correctly
-        # self.assertEqual(self.plugin_dock.current_imagery_type, IMAGERY.HISTORICAL)
-        #
-        # self.plugin_dock.nicfi_imagery.setChecked(True)
-        # self.plugin_dock.historical_imagery.setChecked(False)
-        #
-        # self.plugin_dock.prepare_time_slider()
-        #
-        # # Check if the current imagery type is set correctly
-        # self.assertEqual(self.plugin_dock.current_imagery_type, IMAGERY.NICFI)
+        self.plugin_dock.historical_imagery.setChecked(True)
+        self.plugin_dock.nicfi_imagery.setChecked(False)
+
+        self.plugin_dock.prepare_time_slider()
+
+        # Check if the current imagery type is set correctly
+        self.assertEqual(self.plugin_dock.current_imagery_type, IMAGERY.HISTORICAL)
+
+        self.plugin_dock.nicfi_imagery.setChecked(True)
+        self.plugin_dock.historical_imagery.setChecked(False)
+
+        self.plugin_dock.prepare_time_slider()
+
+        # Check if the current imagery type is set correctly
+        self.assertEqual(self.plugin_dock.current_imagery_type, IMAGERY.NICFI)
+
+    # def test_get_site_layer(self):
+    #     """
+    #     Test the retrieval of the site layer from the project.
+    #     """
+    #     # Assuming you have a valid site layer setup for testing
+    #     layer = iface.addVectorLayer("Point?crs=EPSG:4326", "test_layer", "memory")
+    #
+    #     error = QgsVectorFileWriter.writeAsVectorFormat(
+    #         layer,
+    #         os.path.join(QgsProject.instance().homePath(), 'test.shp'),
+    #         "UTF-8",
+    #         driverName="ESRI Shapefile"
+    #     )
+    #
+    #     root = QgsProject.instance().layerTreeRoot()
+    #     new_group = root.addGroup("Proposed Site Boundaries")
+    #     new_group.addLayer(layer)
+    #
+    #     passed_layer = iface.addVectorLayer(
+    #         os.path.join(QgsProject.instance().homePath(), 'test.shp'),
+    #         'test_layer',
+    #         'ogr')
+    #
+    #     iface.setActiveLayer(passed_layer)
+    #
+    #     site_layer = self.plugin_dock.get_site_layer()
+    #
+    #     self.assertIsNotNone(site_layer)
+    #     self.assertEqual(site_layer.name(), "test_layer")
 
     @classmethod
     def tearDownClass(cls):
