@@ -605,6 +605,20 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     # Disable editing for specific fields
     def update_field_editing(self, layer, field_names, enabled):
+        """
+        Updates the editing capabilities of passed fields in a QGIS vector map layer.
+
+        :param layer: The QGIS layer where the fields' editing properties will be updated.
+        :type layer: QgsVectorLayer
+
+        :param field_names: A list of field names to update the editing properties for.
+        :type field_names: list of str
+
+        :param enabled: A boolean flag that determines whether the fields should be editable or not.
+                        If True, the fields will be editable with a text editor;
+                        if False, they will be hidden.
+        :type enabled: bool
+       """
         setup = 'TextEdit' if enabled else 'Hidden'
         for field_name in field_names:
             idx = layer.fields().indexOf(field_name)
@@ -714,7 +728,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     REPORT_SITE_BOUNDARY_STYLE
                 )
                 saved_layer.renderer().setSymbol(site_symbol)
-
                 QgsProject.instance().addMapLayers([saved_layer])
 
                 QgsProject.instance().removeMapLayer(
