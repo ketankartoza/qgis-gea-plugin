@@ -1,5 +1,5 @@
 ---
-title: GEA AFFORESTATION
+title: GEA Reforestation
 summary: PROJECT_SUMMARY
     - Ketan Bamniya
 date: 19-06-2024

@@ -1,5 +1,5 @@
 ---
-title: GEA AFFORESTATION
+title: GEA Reforestation
 summary: PROJECT_SUMMARY
     - Ketan Bamniya
 date: 19-06-2024
@@ -9,7 +9,7 @@ contact: PROJECT_CONTACT
 license: This program is free software; you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 ---
 
-# GEA AFFORESTATION
+# GEA Reforestation
 
 ![Gea reforestation](./img/gea-home-1.png)
 
