@@ -15,7 +15,7 @@ license: This program is free software; you can redistribute it and/or modify it
 
 * **[GEA Reforestation Tool (Plugin):](gea-reforestation-tool.md)** This guide details the installation and use of the GEA Reforestation Tool Plugin for QGIS. It covers plugin installation, using the time slider for historical imagery, the Drawing Tool for creating project areas, and generating automated reports. Step-by-step instructions with screenshots are provided throughout.
 
-* **[NICFI Imagery:](./nicfi-imagery.md)** A tutorial on accessing and using NICFI imagery in QGIS. It covers Planet Explore account setup, enabling NICFI layers in QGIS, selecting specific imagery dates, and using QGIS tools for analysis. The guide also provides tips for effective use of NICFI imagery in tropical forest analysis and conservation projects.
+* **[NICFI Imagery:](nicfi-imagery.md)** A tutorial on accessing and using NICFI imagery in QGIS. It covers Planet Explore account setup, enabling NICFI layers in QGIS, selecting specific imagery dates, and using QGIS tools for analysis. The guide also provides tips for effective use of NICFI imagery in tropical forest analysis and conservation projects.
 
 * **[Sign Up:](sign-up.md)** This page will show you how to `sign up` for Planet Explorer.
 
