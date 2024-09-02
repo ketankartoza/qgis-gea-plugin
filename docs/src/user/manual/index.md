@@ -28,8 +28,6 @@ you may prefer to work through our [user guide](../guide/index.md).
 
 * **[NICFI Imagery:](nicfi-imagery.md)** This documentation provides an overview of the NICFI Imagery, a collection of high-resolution, analysis-ready mosaics of the world's tropics, provided by Planet. The documentation explains why NICFI Imagery is not included in the project file, how to access it, and how to use it in QGIS. It also provides an overview of the benefits of using NICFI Imagery, including high-resolution imagery, support for non-commercial uses, and access to a large collection of imagery data without the need for a massive file size.
 
-* **[Image Style:](image-style.md)** This page will show how the user can style the image for the better experience.
-
 * **[Sign Up:](sign-up.md)** This page will show how the user can `sign up` for Planet Explorer.
 
 * **[Login:](login.md)** This page will show how the user can `log in` to Planet Explorer.
