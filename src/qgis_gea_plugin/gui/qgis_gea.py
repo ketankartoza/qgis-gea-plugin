@@ -39,14 +39,15 @@ from ..conf import Settings, settings_manager
 from ..definitions.defaults import (
     ANIMATION_PAUSE_ICON,
     ANIMATION_PLAY_ICON,
-    COUNTRY_NAMES,
+    PROJECT_AREAS,
     PLUGIN_ICON,
     PROJECT_INSTANCES_GROUP_NAME,
     PROJECT_INSTANCE_BOUNDARY_STYLE,
     REPORT_SITE_BOUNDARY_STYLE,
     SITE_GROUP_NAME, FARMER_ID_FIELD,
 )
-from ..gui.report_progress_dialog import ReportProgressDialog
+from .attribute_form import AttributeForm
+from .report_progress_dialog import ReportProgressDialog
 from ..lib.reports.manager import report_manager
 from ..models.base import IMAGERY, MapTemporalInfo
 from ..models.report import SiteMetadata
@@ -88,7 +89,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.message_bar = QgsMessageBar()
         self.prepare_message_bar()
 
-        self.country_cmb_box.addItems(COUNTRY_NAMES)
+        self.project_cmb_box.addItems(PROJECT_AREAS)
 
         # Date when project captured started
         self.capture_date = None
@@ -107,7 +108,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.site_ref_version_le.textChanged.connect(self.save_settings)
         self.report_author_le.textChanged.connect(self.save_settings)
         self.project_inception_date.dateChanged.connect(self.save_settings)
-        self.country_cmb_box.currentIndexChanged.connect(self.save_settings)
+        self.project_cmb_box.currentIndexChanged.connect(self.save_settings)
 
         self.report_btn.clicked.connect(self.on_generate_report)
 
@@ -225,7 +226,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.project_inception_date.date().toString("yyyy MM")
         )
 
-        settings_manager.set_value(Settings.REPORT_COUNTRY, self.country_cmb_box.currentText())
+        settings_manager.set_value(Settings.REPORT_COUNTRY, self.project_cmb_box.currentText())
         settings_manager.set_value(Settings.PROJECT_FOLDER, self.project_folder.filePath())
 
         settings_manager.set_value(Settings.ANIMATION_FRAME_RATE, self.frame_rate_box.value())
@@ -246,8 +247,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         )
         self.project_inception_date.setDateTime(stored_project_date)
 
-        index = self.country_cmb_box.findText(settings_manager.get_value(Settings.REPORT_COUNTRY))
-        self.country_cmb_box.setCurrentIndex(index)
+        index = self.project_cmb_box.findText(settings_manager.get_value(Settings.REPORT_COUNTRY))
+        self.project_cmb_box.setCurrentIndex(index)
 
         if settings_manager.get_value(Settings.PROJECT_FOLDER):
             self.project_folder.setFilePath(settings_manager.get_value(Settings.PROJECT_FOLDER))
@@ -324,6 +325,11 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             # Add the layer to the group
             group.addLayer(layer)
 
+            self.load_attribute_form(layer)
+
+    def load_attribute_form(self, layer):
+        attribute_form = AttributeForm(layer)
+        attribute_form.exec_()
 
     def project_folder_changed(self):
         """
@@ -638,7 +644,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         """
         area_name = (f"{self.site_reference_le.text()}_"
                      f"{QgsProject.instance().baseName()}_"
-                     f"{self.country_cmb_box.currentText()}_"
+                     f"{self.project_cmb_box.currentText()}_"
                      f"{self.capture_date}")
         return area_name
 
@@ -814,7 +820,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             first_feature.setAttribute("site_ref", self.site_reference_le.text())
             first_feature.setAttribute("version", self.site_ref_version_le.text())
             first_feature.setAttribute("author", self.report_author_le.text())
-            first_feature.setAttribute("country", self.country_cmb_box.currentText())
+            first_feature.setAttribute("country", self.project_cmb_box.currentText())
             first_feature.setAttribute("inception_date", selected_date_time.toString("MMyy"))
             first_feature.setAttribute("capture_date", self.capture_date)
             first_feature.setAttribute("area (ha)", feature_area)
@@ -905,7 +911,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.site_ref_version_le.setText(None)
         self.report_author_le.setText(None)
         self.project_inception_date.clear()
-        self.country_cmb_box.setCurrentIndex(-1)
+        self.project_cmb_box.setCurrentIndex(-1)
 
         try:
             if self.drawing_layer:
@@ -1053,7 +1059,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.capture_date = capture_date
 
         metadata = SiteMetadata(
-            self.country_cmb_box.currentText(),
+            self.project_cmb_box.currentText(),
             self.project_inception_date.dateTime().toString("MMyy"),
             self.report_author_le.text(),
             self.site_reference_le.text(),
