@@ -22,12 +22,16 @@ from qgis.core import (
     QgsFillSymbol,
     QgsInterval,
     QgsLayerTreeGroup,
+    QgsPalLayerSettings,
     QgsProject,
+    QgsTextFormat,
     QgsTemporalNavigationObject,
     QgsUnitTypes,
+    QgsVectorFileWriter,
     QgsVectorLayer,
-    QgsVectorFileWriter
+    QgsVectorLayerSimpleLabeling
 )
+
 from qgis.gui import QgsLayerTreeView, QgsMessageBar
 
 # Relative imports
@@ -37,8 +41,10 @@ from ..definitions.defaults import (
     ANIMATION_PLAY_ICON,
     COUNTRY_NAMES,
     PLUGIN_ICON,
+    PROJECT_INSTANCES_GROUP_NAME,
+    PROJECT_INSTANCE_BOUNDARY_STYLE,
     REPORT_SITE_BOUNDARY_STYLE,
-    SITE_GROUP_NAME,
+    SITE_GROUP_NAME, FARMER_ID_FIELD,
 )
 from ..gui.report_progress_dialog import ReportProgressDialog
 from ..lib.reports.manager import report_manager
@@ -91,6 +97,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.last_computed_area = ""
 
         self.clear_btn.clicked.connect(self.cancel_drawing)
+        self.import_project_btn.clicked.connect(self.import_project_instance)
 
         self.restore_settings()
 
@@ -247,6 +254,76 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         else:
             self.project_folder.setFilePath(QgsProject.instance().homePath())
             create_dir(os.path.join(self.project_folder.filePath(), 'sites'))
+
+    def import_project_instance(self):
+        self.project_instances_changed()
+
+    def project_instances_changed(self):
+
+        # Define file filter for shapefiles only
+        file_filter = "Shapefiles (*.shp);;All Files (*)"
+
+        # Trigger a file dialog that allows selecting only one .shp file
+        instance_path, _ = QtWidgets.QFileDialog.getOpenFileName(
+            None,
+            "Select Shapefile",
+            "",
+            file_filter
+        )
+
+        instance_name = pathlib.Path(instance_path).stem
+        layer = QgsVectorLayer(instance_path, instance_name, 'ogr')
+
+        if layer.isValid():
+
+            label_settings = QgsPalLayerSettings()
+            label_settings.fieldName = FARMER_ID_FIELD
+
+            text_format = QgsTextFormat()
+            text_format.setFont(QtGui.QFont("Arial", 10))
+            text_format.setSize(12)
+
+            label_settings.setFormat(text_format)
+            label_settings.enabled = True
+
+            labeling = QgsVectorLayerSimpleLabeling(label_settings)
+            layer.setLabeling(labeling)
+
+            layer.setLabelsEnabled(True)
+
+            layer.triggerRepaint()
+
+            instance_symbol = QgsFillSymbol.createSimple(
+                PROJECT_INSTANCE_BOUNDARY_STYLE
+            )
+            layer.renderer().setSymbol(
+                instance_symbol
+            )
+            layer.triggerRepaint()
+
+            # Add the layer to the site boundaries
+            QgsProject.instance().addMapLayer(layer, False)
+            root = QgsProject.instance().layerTreeRoot()
+
+            # Find or create the group
+            group = self.find_group_by_name(
+                PROJECT_INSTANCES_GROUP_NAME,
+                root
+            )
+
+            if not group:
+                main_group = None
+                for child in root.children():
+                    if isinstance(child, QgsLayerTreeGroup):
+                        main_group = child
+                        break
+                main_group = main_group if main_group is not None else root
+
+                group = main_group.insertGroup(0, PROJECT_INSTANCES_GROUP_NAME)
+
+            # Add the layer to the group
+            group.addLayer(layer)
+
 
     def project_folder_changed(self):
         """

@@ -238,6 +238,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="import_project_btn">
+           <property name="text">
+            <string>Import project instance</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
