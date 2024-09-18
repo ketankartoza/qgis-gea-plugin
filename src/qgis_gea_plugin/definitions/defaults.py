@@ -43,6 +43,15 @@ COUNTRY_NAMES = [
     "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
 ]
 
+PROJECT_AREAS = [
+    'Western Kenya',
+    'Coastal Kenya',
+    'Eastern Uganda',
+    'Western Uganda',
+    'Malawi',
+    ''
+]
+
 ADMIN_AREAS_GROUP_NAME = "Administrative Areas"
 DISTRICTS_NAME_SEGMENT = "Districts"
 EXCLUSION_MASK_GROUP_NAME = "Exclusion Masks"

@@ -250,7 +250,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="4" column="1">
-          <widget class="QComboBox" name="country_cmb_box"/>
+          <widget class="QComboBox" name="project_cmb_box"/>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_5">
@@ -258,7 +258,7 @@
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Country where the project was conducted.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Country</string>
+            <string>Project</string>
            </property>
           </widget>
          </item>
