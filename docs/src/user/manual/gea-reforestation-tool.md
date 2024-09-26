@@ -46,7 +46,7 @@ The user can use the drawing tool to draw polygons on the map canvas.
     
 ![Drawing tool](./img/gea-reforestation-tool-5.png)
 
-5.1 **Draw Project Area Button:** The user can use this button to draw the polygon on the map canvas. Before using the `Draw Project Area` button, ensure that the site reference has been provided. After drawing the polygon right-click. Upon clicking the pop-up will open for entering the ID, ID should be 1.
+**Draw Project Area Button:** The user can use this button to draw the polygon on the map canvas. Before using the `Draw Project Area` button, ensure that the site reference has been provided. After drawing the polygon right-click. Upon clicking the pop-up will open for entering the ID, ID should be 1.
 
 ![Id popup](./img/gea-reforestation-tool-9.png)
 
@@ -54,29 +54,59 @@ The user can use the drawing tool to draw polygons on the map canvas.
 
     ![Error message](./img/gea-reforestation-tool-4.png)
 
-- **Editing:** After drawing the polygon, you can edit it using the options available in the toolbar. The edit icon will appear in front of the project in the layer list, allowing modifications before saving.
+* **Editing:** After drawing the polygon, you can edit it using the options available in the toolbar. The edit icon will appear in front of the project in the layer list, allowing modifications before saving.
 
     ![Edit options](./img/gea-reforestation-tool-6.png)
 
-5.2 **Project Inception Date:** To choose the project inception date, click on the field to open a calendar. Select the desired date from the calendar interface.
+* **Project Inception Date:** To choose the project inception date, click on the field to open a calendar. Select the desired date from the calendar interface.
 
 ![Calander](./img/gea-reforestation-tool-7.png)
 
-5.3 **Site Reference:** Enter the site reference to identify the specific location or area for the project.
+* **Site Reference:** Enter the site reference to identify the specific location or area for the project.
 
-5.4 **Version of the Site Reference:** Add the version number corresponding to the site reference for version control and tracking.
+* **Version of the Site Reference:** Add the version number corresponding to the site reference for version control and tracking.
 
-5.5 **Author of the Site Capture:** Enter the name of the individual who captured or recorded the site details.
+* **Author of the Site Capture:** Enter the name of the individual who captured or recorded the site details.
 
-5.6 **Country Dropdown:** Choose the country from the dropdown list to specify the location of the project.
+* **Country Dropdown:** Choose the country from the dropdown list to specify the location of the project.
 
-5.7 **Project Folder:** Select the project folder where plugin data is stored. The shape files will be saved in the `Sites` directory, which is automatically generated when you save the project.
+* **Project Folder:** Select the project folder where plugin data is stored. The shape files will be saved in the `Sites` directory, which is automatically generated when you save the project.
 
 ![Sites directory](./img/gea-reforestation-tool-8.png)
 
-5.8 **Save Project Area Button:** Click the `Save Project Area` button to save the project after drawing the polygon. The shape files will be stored in the `Sites` directory.
+* **Save Project Area Button:** Click the `Save Project Area` button to save the project after drawing the polygon. The shape files will be stored in the `Sites` directory.
 
-5.9 **Clear Button:** Use the `Clear` button to remove the polygon from the map. Note that the polygon must be cleared before saving the project, as shape files stored in the sites folder will not be deleted after saving.
+* **Clear Button:** Use the `Clear` button to remove the polygon from the map. Note that the polygon must be cleared before saving the project, as shape files stored in the sites folder will not be deleted after saving.
+
+**Import project instance:** The user can use the `Import project instance` button to import project instances directly from the system. After clicking on the `Import project instance` button, a pop-up window will appear where the user can select an instance from the available options.
+
+![Import Project Instance](./img/gea-reforestation-tool-10.png)
+
+* **Cancle:** Close the pop-up window.
+* **Open:** Select the file and click on the `Open button` to proceed.
+* **Shapefiles:** Extension of the file.
+
+After selecting the desired project instance user will click on the `open` button and a pop up project instance attributes dialog box will appear.
+
+![Project Instance Attributes](./img/gea-reforestation-tool-11.png)
+
+* **X:** Close the pop-up dialog box. 
+* **Report Author:** The name of the person generating the report.
+* **Project:** The name of the country where the project is located.
+* **Cancle:** Terminate the process.
+* **Save:** Save the instance to proceed.
+
+**Error Message:** If the author, project, IncepDate, or area names are already present in the project instance, you will encounter this error.
+
+![Error](./img/gea-reforestation-tool-13.png)
+
+* **X:** Close the window.
+* **No:**  Cancel the process.
+* **Yes:** Overwrite names.
+
+After saving the instance, the selected instance will be added to the project instances in the layer section.
+
+![Qgis Interface](./img/gea-reforestation-tool-12.png)
 
 ## Automated Report
 
