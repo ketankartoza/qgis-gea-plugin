@@ -197,6 +197,15 @@ After saving the instance, your selected instance will be added to the project i
 
 ![Report](./img/gea-reforestation-tool-13.png)
 
-**Generating an Automated Report:** After drawing and saving your project area, click the Generate Report` button. The system will create an automated report based on your project area and details.
+**Generating an Automated Report:** After drawing and saving your project area, click on the 1️⃣ `Generate Report` button, upon clicking the button report generation process will start and the pop-up window will open, showing the status of the process.
+
+![Report Progress Dialog](./img/gea-reforestation-tool-21.png)
+
+* **Close:**  Close the dialog to continue working on your project.
+* **Open PDF:** Open the generated report PDF in a new pop-up window  (Shown below).
+
+![Report PDF](./img/gea-reforestation-tool-22.png)
 
 By following these steps, you will be able to effectively use the Drawing Tool to define your project areas and generate automated reports for the GEA Reforestation project.
+
+

@@ -50,7 +50,7 @@ The user can use the drawing tool to draw polygons on the map canvas.
 
 ![Id popup](./img/gea-reforestation-tool-9.png)
 
-- **Error Handling:** If any of the fields is empty, an error message will be displayed for example for the site reference field the message would be: `Please add the site reference before starting drawing the project area.`
+* **Error Handling:** If any of the fields is empty, an error message will be displayed for example for the site reference field the message would be: `Please add the site reference before starting drawing the project area.`
 
     ![Error message](./img/gea-reforestation-tool-4.png)
 
@@ -82,7 +82,7 @@ The user can use the drawing tool to draw polygons on the map canvas.
 
 ![Import Project Instance](./img/gea-reforestation-tool-10.png)
 
-* **Cancle:** Close the pop-up window.
+* **Cancel:** Close the pop-up window.
 * **Open:** Select the file and click on the `Open button` to proceed.
 * **Shapefiles:** Extension of the file.
 
@@ -110,4 +110,34 @@ After saving the instance, the selected instance will be added to the project in
 
 ## Automated Report
 
-Click on the generate report button to generate an automated report.
+![Generate Report](./img/gea-reforestation-tool-14.png)
+
+1. **Generate Report:** Click on the `Generate Report` button to generate an automated report.
+
+    After clicking the `Generate Report` button **Site Report Progress** pop-up window will appear displaying the status of the report.
+
+    ![Site Report Progress](./img/gea-reforestation-tool-15.png)
+
+    * **Progress Bar:** Displaying the current status of the process.
+    * **Close:** Cancel the process.
+    * **Open PDF:** Open the PDF in a new pop-up window.
+
+    ## Genenrated Report
+
+    This is the report generated after completing the process.
+
+    ![Generated Report](./img/gea-reforestation-tool-16.png)
+
+    1. **GEA Reforestation Site Report:** Displaying the report information.
+        - **Date of Project Inception:** The date when the project started.
+        - **Version of Site Referrence:** The version of the site reference.
+        - **Date of Site Capture:** The date when the site was captured.
+        - **Site Refference:** The site reference.
+        - **Author of Site Capture:** The person who captured the site.
+        - **Country Location:** The country where the project is located.
+        - **Site Area:** The area of the site.
+
+    2. **Site Location Maps:** Displaying the site location on the maps.
+
+    3. **Landscape Exclusion and Inclusion Areas:**  Displaying the Historical Landsat 2013 with and without exclusion masks and 
+    proposed site.
