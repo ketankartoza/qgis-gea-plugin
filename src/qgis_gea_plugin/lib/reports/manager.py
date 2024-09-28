@@ -73,7 +73,6 @@ class ReportManager(QtCore.QObject):
         :rtype: ReportSubmitResult
         """
         if not Path(project_folder).exists():
-            log(f"Project folder {project_folder} does not exist.", info=False)
             return ReportSubmitResult(False, None, "-1")
 
         feedback = QgsFeedback()

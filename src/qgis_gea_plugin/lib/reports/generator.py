@@ -161,7 +161,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         else False.
         :type result: bool
         """
-        if len(self._result.errors) > 0:
+        if self._result and len(self._result.errors) > 0:
             log(
                 f"Errors occurred when generating the site "
                 f"report for {self.report_name}."
@@ -183,12 +183,8 @@ class SiteReportReportGeneratorTask(QgsTask):
             layout_name = self._output_report_layout.name()
 
             for layout in project.layoutManager().printLayouts():
-                log(f"Iterate layout name {layout.name()}, layout_name {layout_name}")
                 if layout.name() == layout_name:
-                    # If overwrite option is set, remove the existing layout
-
                     project.layoutManager().removeLayout(layout)
-                    log(f"Layout '{layout_name}' has been overwritten.")
                     break
 
             project.layoutManager().addLayout(self._output_report_layout)
@@ -205,7 +201,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         :rtype: bool
         """
         if self._feedback.isCanceled():
-            tr_msg = tr("Generation of site report cancelled.")
+            tr_msg = tr("Generation of report has been cancelled.")
             self._error_messages.append(tr_msg)
 
             return True

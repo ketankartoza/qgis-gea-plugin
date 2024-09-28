@@ -1140,7 +1140,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.project_dir = self.project_folder.filePath()
 
             for metadata in project_instances:
-                log(f"metadata {metadata}")
                 submit_result = report_manager.generate_site_report(
                     metadata,
                     self.project_dir,
@@ -1149,13 +1148,19 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 if not submit_result.success:
                     self.message_bar.pushWarning(
                         tr("Site Report Error"),
-                        tr("Unable to submit request for report. See logs for more details.")
+                        tr("Unable to submit request "
+                           "for report. See logs for more details."
+                           )
                     )
 
                     return
                 last_sub_task = counter == len(project_instances) - 1
                 if last_sub_task:
-                    main_task.addSubTask(submit_result.task, tasks, QgsTask.ParentDependsOnSubTask)
+                    main_task.addSubTask(
+                        submit_result.task,
+                        tasks,
+                        QgsTask.ParentDependsOnSubTask
+                    )
                 else:
                     main_task.addSubTask(submit_result.task, tasks)
                 tasks.append(submit_result.task)
@@ -1164,7 +1169,12 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
             QgsApplication.taskManager().addTask(main_task)
 
-            result = ReportSubmitResult(True, self.feedback, None, main_task)
+            result = ReportSubmitResult(
+                True,
+                self.feedback,
+                None,
+                main_task
+            )
 
             progress_message = tr(
                 f"Generating {len(farmer_ids)} report(s) ...")
@@ -1220,6 +1230,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     def report_terminated(self):
         log(f"Report generation terminated ")
+        self.current_project_layer.setSubsetString('')
 
     def main_report_task(self, exception, result=None):
         self.report_progress_dialog._on_report_finished()

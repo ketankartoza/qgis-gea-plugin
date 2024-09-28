@@ -67,7 +67,7 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
             self.btn_open_pdf.clicked.connect(self._on_open_pdf)
         else:
             self.btn_open_pdf = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
-            self.btn_open_pdf.setText(tr("Open report folder"))
+            self.btn_open_pdf.setText(tr("Open report(s) folder"))
             self.btn_open_pdf.setEnabled(False)
             self.btn_open_pdf.setIcon(FileUtils.get_icon("pdf.svg"))
             self.btn_open_pdf.clicked.connect(self._on_open_pdf_folder)
@@ -193,10 +193,13 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
     def _on_closed(self):
         """Slot raised when the Close button has been clicked."""
         if self._report_running:
-            status = self._report_manager.cancel(self._submit_result)
-            if not status:
-                log(tr("Unable to cancel report generation process."))
-                return
+            if self.show_pdf_folder:
+                self._submit_result.task.cancel()
+            else:
+                status = self._report_manager.cancel(self._submit_result)
+                if not status:
+                    log(tr("Unable to cancel report generation process."))
+                    return
 
             self._set_close_state()
             self.lbl_message.setText(tr("Report generation canceled"))
