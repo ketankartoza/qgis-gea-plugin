@@ -54,14 +54,14 @@ class ReportManager(QtCore.QObject):
 
     def generate_site_report(
             self,
-            metadata: SiteMetadata | ProjectMetadata,
+            metadata: type.Union[SiteMetadata, ProjectMetadata],
             project_folder: str,
             temporal_info: MapTemporalInfo
     ) -> ReportSubmitResult:
         """Initiates the site report generation process.
 
         :param metadata: Information about the site.
-        :type metadata: SiteMetadata
+        :type metadata: type.Union[SiteMetadata, ProjectMetadata]
 
         :param project_folder: Path of the project directory.
         :type project_folder: str
