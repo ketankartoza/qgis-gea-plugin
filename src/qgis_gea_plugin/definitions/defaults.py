@@ -64,6 +64,8 @@ SITE_GROUP_NAME = "Proposed Site Boundaries"
 PROJECT_INSTANCES_GROUP_NAME = "Project Instances"
 
 SITE_REPORT_TEMPLATE_NAME = "reforestation_site.qpt"
+PROJECT_INSTANCE_REPORT_TEMPLATE_NAME = "project_instance.qpt"
+
 
 FARMER_ID_FIELD = "FarmerID"
 

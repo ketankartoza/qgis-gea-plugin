@@ -4,7 +4,11 @@ Dialog for showing the progress of the report generation process.
 """
 
 import os
+import platform
 import typing
+import subprocess
+
+import pathlib
 
 from qgis.core import Qgis
 from qgis.gui import QgsGui
@@ -30,6 +34,9 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
     def __init__(
         self,
         submit_result: ReportSubmitResult,
+        project_dir=None,
+        show_pdf_folder=False,
+        message=None,
         parent=None
     ):
         super().__init__(
@@ -44,21 +51,33 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
 
         self._report_running = True
 
+        self.show_pdf_folder = show_pdf_folder
+        self.project_dir = project_dir
+        self.report_output_dir = None
+
         self._submit_result = submit_result
         self._feedback = self._submit_result.feedback
         self._feedback.progressChanged.connect(self._on_progress_changed)
 
-        self.btn_open_pdf = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
-        self.btn_open_pdf.setText(tr("Open PDF"))
-        self.btn_open_pdf.setEnabled(False)
-        self.btn_open_pdf.setIcon(FileUtils.get_icon("pdf.svg"))
-        self.btn_open_pdf.clicked.connect(self._on_open_pdf)
+        if not self.show_pdf_folder:
+            self.btn_open_pdf = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+            self.btn_open_pdf.setText(tr("Open PDF"))
+            self.btn_open_pdf.setEnabled(False)
+            self.btn_open_pdf.setIcon(FileUtils.get_icon("pdf.svg"))
+            self.btn_open_pdf.clicked.connect(self._on_open_pdf)
+        else:
+            self.btn_open_pdf = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+            self.btn_open_pdf.setText(tr("Open report folder"))
+            self.btn_open_pdf.setEnabled(False)
+            self.btn_open_pdf.setIcon(FileUtils.get_icon("pdf.svg"))
+            self.btn_open_pdf.clicked.connect(self._on_open_pdf_folder)
 
         self.btn_close = self.buttonBox.button(QtWidgets.QDialogButtonBox.Close)
         self.btn_close.setText(tr("Cancel"))
         self.btn_close.clicked.connect(self._on_closed)
 
-        self.lbl_message.setText(tr("Generating report..."))
+        self.progress_message = message or tr("Generating report...")
+        self.lbl_message.setText(self.progress_message)
 
         self.pg_bar.setValue(int(self._feedback.progress()))
 
@@ -84,8 +103,14 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         self.btn_open_pdf.setEnabled(True)
         self._set_close_state()
 
-        if len(self.report_result.errors) == 0:
+        if self.report_result and len(self.report_result.errors) == 0:
             self.lbl_message.setText(tr("Report generation complete"))
+        elif self.show_pdf_folder:
+            self.report_output_dir = os.path.join(
+                f"{self.project_dir}",
+                "reports",
+                "project_instances"
+            )
         else:
             tr_msg = tr(
                 "Report generation complete however there were errors "
@@ -125,7 +150,6 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         """Slot raised to show PDF report if report generation process
         was successful.
         """
-        log("Opening pdf")
         if self.report_result is None:
             log(
                 tr("Output from the report generation process could not be determined.")
@@ -136,6 +160,30 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         status = self._report_manager.view_pdf(self.report_result)
         if not status:
             log(tr("Unable to open the PDF report."))
+
+    def _on_open_pdf_folder(self):
+        """Slot raised to show PDF report if report generation process
+        was successful.
+        """
+
+        # Open the folder
+        if self.report_output_dir:
+            if os.path.exists(str(self.report_output_dir)):
+                current_os = platform.system()
+
+                if current_os == "Windows":
+                    os.startfile(self.report_output_dir)
+                elif current_os == "Darwin":  # macOS
+                    subprocess.run(['open', self.report_output_dir])
+                elif current_os == "Linux":
+                    subprocess.run(['xdg-open', self.report_output_dir])
+                else:
+                    log(f"Unsupported OS: {current_os}")
+                subprocess.run(['xdg-open', self.report_output_dir])
+            else:
+                log("Folder path doesn't exist")
+        else:
+            log(f"Reporty directory not available {self.report_output_dir}")
 
     def _set_close_state(self):
         """Set dialog to a closeable state."""

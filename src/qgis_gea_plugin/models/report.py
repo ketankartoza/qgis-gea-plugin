@@ -4,8 +4,9 @@
 
 import dataclasses
 import typing
+from importlib.metadata import metadata
 
-from qgis.core import QgsFeedback
+from qgis.core import QgsFeedback, QgsTask
 
 from .base import MapTemporalInfo
 
@@ -17,6 +18,7 @@ class ReportSubmitResult:
     success: bool
     feedback: typing.Optional[QgsFeedback]
     identifier: str = "-1"
+    task: QgsTask = None
 
 
 @dataclasses.dataclass
@@ -44,10 +46,21 @@ class SiteMetadata:
 
 
 @dataclasses.dataclass
+class ProjectMetadata:
+    """Information about the project instance report."""
+
+    farmer_id: str
+    inception_date: str
+    project: str
+    author: str
+    total_area: str
+
+
+@dataclasses.dataclass
 class SiteReportContext:
     """Information required to generate a site report."""
 
-    metadata: SiteMetadata
+    metadata: typing.Union[SiteMetadata, ProjectMetadata]
     feedback: QgsFeedback
     project_dir: str
     qgs_project_path: str
@@ -64,5 +77,7 @@ class SiteReportContext:
         """
         if not self.project_dir:
             return ""
+        if isinstance(self.metadata, ProjectMetadata):
+            return f"{self.project_dir}/reports/project_instances"
 
         return f"{self.project_dir}/reports"

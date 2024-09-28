@@ -10,6 +10,7 @@ import typing
 import uuid
 
 from datetime import datetime, timedelta
+from importlib.metadata import metadata
 
 # QGIS imports
 from qgis.PyQt import QtCore, QtGui, QtNetwork, QtWidgets
@@ -17,13 +18,16 @@ from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.uic import loadUiType
 from qgis.core import (
     Qgis,
+    QgsApplication,
     QgsEditorWidgetSetup,
+    QgsFeedback,
     QgsField,
     QgsFillSymbol,
     QgsInterval,
     QgsLayerTreeGroup,
     QgsPalLayerSettings,
     QgsProject,
+    QgsTask,
     QgsTextFormat,
     QgsTemporalNavigationObject,
     QgsUnitTypes,
@@ -50,7 +54,7 @@ from .attribute_form import AttributeForm
 from .report_progress_dialog import ReportProgressDialog
 from ..lib.reports.manager import report_manager
 from ..models.base import IMAGERY, MapTemporalInfo
-from ..models.report import SiteMetadata
+from ..models.report import ReportSubmitResult, SiteMetadata, ProjectMetadata
 
 from ..resources import *
 from ..utils import animation_state_change, clean_filename, create_dir, log, tr
@@ -96,6 +100,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         # Last captured area of the site
         self.last_computed_area = ""
+
+        self.project_dir = None
 
         self.clear_btn.clicked.connect(self.cancel_drawing)
         self.import_project_btn.clicked.connect(self.import_project_instance)
@@ -977,12 +983,17 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             if layer_node is not None:
                 parent_group = layer_node.parent()
 
-                if (parent_group is not None and
-                        parent_group.name() == SITE_GROUP_NAME):
-                    settings_manager.set_value(
-                        Settings.LAST_SITE_LAYER_PATH,
-                        selected_layer.dataProvider().dataSourceUri()
-                    )
+                if parent_group is not None:
+                    if parent_group.name() == SITE_GROUP_NAME:
+                        settings_manager.set_value(
+                            Settings.LAST_SITE_LAYER_PATH,
+                            selected_layer.dataProvider().dataSourceUri()
+                        )
+                    else:
+                        settings_manager.set_value(
+                            Settings.CURRENT_PROJECT_LAYER_PATH,
+                            selected_layer.dataProvider().dataSourceUri()
+                        )
                     return selected_layer
 
         sites_layer_path = settings_manager.get_value(
@@ -1017,6 +1028,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         # Get last saved layer
         site_layer = self.get_site_layer()
+
         if site_layer is None:
             tr_msg = tr("Unable to retrieve the saved project area.")
             QtWidgets.QMessageBox.critical(
@@ -1037,7 +1049,18 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             log(message=tr_msg, info=False)
             return
 
-        features = list(site_layer.getFeatures())
+        layer_node = (QgsProject.instance().layerTreeRoot().
+                      findLayer(site_layer.id()))
+        group = ""
+        if layer_node is not None:
+            parent_group = layer_node.parent()
+            group = parent_group.name()
+
+        self.current_project_layer = site_layer
+
+        site_features = site_layer.getFeatures()
+        features = list(site_features)
+
         if len(features) == 0:
             tr_msg = tr("The saved project area is empty.")
             QtWidgets.QMessageBox.critical(
@@ -1047,27 +1070,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
             log(message=tr_msg, info=False)
             return
-
-        # Get capture date and area
-        feature = features[0]
-
-        # If shapefile, some attribute names are truncated
-        capture_date = feature["capture_da"]
-        area = feature["area (ha)"]
-
-        if self.capture_date is None:
-            self.capture_date = capture_date
-
-        metadata = SiteMetadata(
-            self.project_cmb_box.currentText(),
-            self.project_inception_date.dateTime().toString("MMyy"),
-            self.report_author_le.text(),
-            self.site_reference_le.text(),
-            self.site_ref_version_le.text(),
-            self._get_area_name(),
-            capture_date,
-            area
-        )
 
         if not self.historical_imagery.isChecked() and not self.nicfi_imagery.isChecked():
             self.show_message(
@@ -1086,18 +1088,140 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.iface.mapCanvas().temporalRange()
         )
 
-        submit_result = report_manager.generate_site_report(
-            metadata,
-            self.project_folder.filePath(),
-            temporal_info
-        )
-        if not submit_result.success:
-            self.message_bar.pushWarning(
-                tr("Site Report Error"),
-                tr("Unable to submit request for report. See logs for more details.")
-            )
-            return
+        if group == PROJECT_INSTANCES_GROUP_NAME:
+            site_feature = next(site_layer.getFeatures(), None)
 
-        self.report_progress_dialog = ReportProgressDialog(submit_result)
-        self.report_progress_dialog.setModal(False)
-        self.report_progress_dialog.show()
+            farmer_ids = []
+            project_instances = []
+
+            for site_feature in list(site_layer.getFeatures()):
+
+                farmer_ids.append(site_feature[FARMER_ID_FIELD]) \
+                    if site_feature[FARMER_ID_FIELD] not in farmer_ids else None
+
+            for farmer_id in farmer_ids:
+                total_area = 0
+                area = 0
+                total_area += 0
+
+                inception_date = site_feature['IncepDate']
+                author = site_feature['author']
+                project = site_feature['project']
+                #
+                for site_feature in site_layer.getFeatures():
+                    if site_feature[FARMER_ID_FIELD] == farmer_id:
+                        area = float(site_feature['area (ha)'])
+                        total_area += area
+
+                metadata = ProjectMetadata(
+                    farmer_id=farmer_id,
+                    inception_date=inception_date,
+                    author=author,
+                    project=project,
+                    total_area=total_area,
+                )
+
+                project_instances.append(metadata)
+            tasks = []
+
+            main_task = QgsTask.fromFunction(
+                'Report task',
+                self.main_report_task,
+                on_finished=self.main_report_task
+            )
+
+            self.feedback = QgsFeedback()
+
+            main_task.progressChanged.connect(self.report_progress_changed)
+            main_task.taskTerminated.connect(self.report_terminated)
+
+            counter = 0
+
+            self.project_dir = self.project_folder.filePath()
+
+            for metadata in project_instances:
+                log(f"metadata {metadata}")
+                submit_result = report_manager.generate_site_report(
+                    metadata,
+                    self.project_dir,
+                    temporal_info
+                )
+                if not submit_result.success:
+                    self.message_bar.pushWarning(
+                        tr("Site Report Error"),
+                        tr("Unable to submit request for report. See logs for more details.")
+                    )
+
+                    return
+                last_sub_task = counter == len(project_instances) - 1
+                if last_sub_task:
+                    main_task.addSubTask(submit_result.task, tasks, QgsTask.ParentDependsOnSubTask)
+                else:
+                    main_task.addSubTask(submit_result.task, tasks)
+                tasks.append(submit_result.task)
+
+                counter += 1
+
+            QgsApplication.taskManager().addTask(main_task)
+
+            result = ReportSubmitResult(True, self.feedback, None, main_task)
+
+            progress_message = tr(
+                f"Generating {len(farmer_ids)} report(s) ...")
+            self.report_progress_dialog = ReportProgressDialog(
+                result,
+                self.project_dir,
+                True,
+                message=progress_message
+            )
+            self.report_progress_dialog.setModal(False)
+            self.report_progress_dialog.show()
+
+        elif group == SITE_GROUP_NAME:
+            # Get capture date and area
+            feature = features[0]
+
+            # If shapefile, some attribute names are truncated
+            capture_date = feature["capture_da"]
+            area = feature["area (ha)"]
+
+            if self.capture_date is None:
+                self.capture_date = capture_date
+
+            metadata = SiteMetadata(
+                self.project_cmb_box.currentText(),
+                self.project_inception_date.dateTime().toString("MMyy"),
+                self.report_author_le.text(),
+                self.site_reference_le.text(),
+                self.site_ref_version_le.text(),
+                self._get_area_name(),
+                capture_date,
+                area
+            )
+
+            submit_result = report_manager.generate_site_report(
+                metadata,
+                self.project_folder.filePath(),
+                temporal_info
+            )
+            if not submit_result.success:
+                self.message_bar.pushWarning(
+                    tr("Site Report Error"),
+                    tr("Unable to submit request for report. See logs for more details.")
+                )
+                return
+
+            self.report_progress_dialog = ReportProgressDialog(submit_result)
+            self.report_progress_dialog.setModal(False)
+            self.report_progress_dialog.show()
+
+    def report_progress_changed(self, progress):
+        self.feedback.setProgress(progress)
+
+    def report_terminated(self):
+        log(f"Report generation terminated ")
+
+    def main_report_task(self, exception, result=None):
+        self.report_progress_dialog._on_report_finished()
+        self.current_project_layer.setSubsetString('')
+

@@ -12,7 +12,10 @@ from qgis.core import (
     QgsMessageLog,
 )
 
-from .definitions.defaults import SITE_REPORT_TEMPLATE_NAME
+from .definitions.defaults import (
+    PROJECT_INSTANCE_REPORT_TEMPLATE_NAME,
+    SITE_REPORT_TEMPLATE_NAME
+)
 
 
 def log(
@@ -133,6 +136,17 @@ class FileUtils:
         :rtype: str
         """
         return FileUtils.report_template_path(SITE_REPORT_TEMPLATE_NAME)
+
+    @staticmethod
+    def project_instance_report_template_path() -> str:
+        """Gets the path to the project instance report template
+        (*.qpt) file.
+
+        :returns: Returns the absolute path to the
+        report template (*.qpt) file.
+        :rtype: str
+        """
+        return FileUtils.report_template_path(PROJECT_INSTANCE_REPORT_TEMPLATE_NAME)
 
     @staticmethod
     def get_icon(file_name: str) -> QtGui.QIcon:
