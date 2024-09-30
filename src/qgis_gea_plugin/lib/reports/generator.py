@@ -71,7 +71,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         self._landscape_layer = None
 
         self.report_name = context.metadata.area_name \
-        if isinstance(context, SiteMetadata) else f"Farmer ID {context.metadata.farmer_id}"
+        if isinstance(context.metadata, SiteMetadata) else f"Farmer ID {context.metadata.farmer_id}"
 
         self.setDescription(f"{tr('Generating report for')}: {self.report_name}")
 
@@ -163,7 +163,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         """
         if self._result and len(self._result.errors) > 0:
             log(
-                f"Errors occurred when generating the site "
+                f"Errors occurred when generating the "
                 f"report for {self.report_name}."
                 f" See details below: ",
                 info=False,
@@ -175,7 +175,10 @@ class SiteReportReportGeneratorTask(QgsTask):
         if result:
             # Load layout
             project = QgsProject.instance()
-            self._output_report_layout = _load_layout_from_file(self._output_layout_path, project)
+            self._output_report_layout = _load_layout_from_file(
+                self._output_layout_path,
+                project
+            )
             if self._output_report_layout is None:
                 log("Could not load output report from file.", info=False)
                 return
@@ -417,9 +420,15 @@ class SiteReportReportGeneratorTask(QgsTask):
         """Fetch the site boundary layer.
         """
 
-        site_path = settings_manager.get_value(Settings.LAST_SITE_LAYER_PATH, default="") \
+        site_path = settings_manager.get_value(
+            Settings.LAST_SITE_LAYER_PATH,
+            default=""
+        ) \
             if isinstance(self._context.metadata, SiteMetadata) else \
-            settings_manager.get_value(Settings.CURRENT_PROJECT_LAYER_PATH, default="")
+            settings_manager.get_value(
+                Settings.CURRENT_PROJECT_LAYER_PATH,
+                default=""
+            )
 
         path = Path(site_path)
         if not path.exists():

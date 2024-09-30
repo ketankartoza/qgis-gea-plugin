@@ -188,6 +188,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.drawing_layer = None
         self.drawing_layer_path = None
 
+        self.layer_subset_string = None
         self.saved_layer = None
 
         self.feature_count = 0
@@ -990,10 +991,14 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                             selected_layer.dataProvider().dataSourceUri()
                         )
                     else:
+                        subset_string = selected_layer.subsetString()
+                        selected_layer.setSubsetString('')
+
                         settings_manager.set_value(
                             Settings.CURRENT_PROJECT_LAYER_PATH,
                             selected_layer.dataProvider().dataSourceUri()
                         )
+                        selected_layer.setSubsetString(subset_string)
                     return selected_layer
 
         sites_layer_path = settings_manager.get_value(
@@ -1023,14 +1028,12 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     def on_generate_report(self):
         """Slot raised to initiate the generation of a site report."""
-        if not self.is_project_info_valid():
-            return
 
         # Get last saved layer
         site_layer = self.get_site_layer()
 
         if site_layer is None:
-            tr_msg = tr("Unable to retrieve the saved project area.")
+            tr_msg = tr("Unable to retrieve the project area.")
             QtWidgets.QMessageBox.critical(
                 self,
                 self.tr("Generate Report"),
@@ -1040,7 +1043,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             return
 
         if not site_layer.isValid():
-            tr_msg = tr("The last saved project area is invalid.")
+            tr_msg = tr("The project area is invalid.")
             QtWidgets.QMessageBox.critical(
                 self,
                 self.tr("Generate Report"),
@@ -1057,12 +1060,15 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             group = parent_group.name()
 
         self.current_project_layer = site_layer
+        self.layer_subset_string = self.current_project_layer.subsetString()
+
+        self.current_project_layer.setSubsetString('')
 
         site_features = site_layer.getFeatures()
         features = list(site_features)
 
         if len(features) == 0:
-            tr_msg = tr("The saved project area is empty.")
+            tr_msg = tr("The project area is empty.")
             QtWidgets.QMessageBox.critical(
                 self,
                 self.tr("Generate Report"),
@@ -1099,9 +1105,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 farmer_ids.append(site_feature[FARMER_ID_FIELD]) \
                     if site_feature[FARMER_ID_FIELD] not in farmer_ids else None
 
+            total_area = 0
             for farmer_id in farmer_ids:
-                total_area = 0
-                area = 0
                 total_area += 0
 
                 inception_date = site_feature['IncepDate']
@@ -1135,7 +1140,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             main_task.progressChanged.connect(self.report_progress_changed)
             main_task.taskTerminated.connect(self.report_terminated)
 
-            counter = 0
+            task_counter = 0
 
             self.project_dir = self.project_folder.filePath()
 
@@ -1154,7 +1159,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     )
 
                     return
-                last_sub_task = counter == len(project_instances) - 1
+                last_sub_task = task_counter == len(project_instances) - 1
                 if last_sub_task:
                     main_task.addSubTask(
                         submit_result.task,
@@ -1165,7 +1170,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     main_task.addSubTask(submit_result.task, tasks)
                 tasks.append(submit_result.task)
 
-                counter += 1
+                task_counter += 1
 
             QgsApplication.taskManager().addTask(main_task)
 
@@ -1188,6 +1193,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.report_progress_dialog.show()
 
         elif group == SITE_GROUP_NAME:
+
+            if not self.is_project_info_valid():
+                return
+
             # Get capture date and area
             feature = features[0]
 
@@ -1234,5 +1243,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
     def main_report_task(self, exception, result=None):
         self.report_progress_dialog._on_report_finished()
-        self.current_project_layer.setSubsetString('')
+        self.current_project_layer.setSubsetString(
+            self.layer_subset_string
+        )
 
