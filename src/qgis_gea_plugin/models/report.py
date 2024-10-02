@@ -77,7 +77,5 @@ class SiteReportContext:
         """
         if not self.project_dir:
             return ""
-        if isinstance(self.metadata, ProjectMetadata):
-            return f"{self.project_dir}/reports/project_instances"
 
         return f"{self.project_dir}/reports"

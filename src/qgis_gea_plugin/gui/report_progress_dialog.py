@@ -82,9 +82,6 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         self.pg_bar.setValue(int(self._feedback.progress()))
 
         self._task = None
-        if submit_result.identifier:
-            self._task = self._report_manager.task_by_id(submit_result.identifier)
-
         if self._task is not None:
             self._task.taskCompleted.connect(self._on_report_finished)
             self._task.taskTerminated.connect(self._on_report_error)
@@ -108,8 +105,7 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         elif self.show_pdf_folder:
             self.report_output_dir = os.path.join(
                 f"{self.project_dir}",
-                "reports",
-                "project_instances"
+                "reports"
             )
         else:
             tr_msg = tr(
@@ -152,7 +148,10 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         """
         if self.report_result is None:
             log(
-                tr("Output from the report generation process could not be determined.")
+                tr(
+                    "Output from the report generation"
+                    " process could not be determined."
+                )
             )
 
             return

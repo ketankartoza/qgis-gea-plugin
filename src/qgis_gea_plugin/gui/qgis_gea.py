@@ -1096,9 +1096,13 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             log(message=tr_msg, info=False)
             return
 
-        if not self.historical_imagery.isChecked() and not self.nicfi_imagery.isChecked():
+        if (not self.historical_imagery.isChecked()
+                and not self.nicfi_imagery.isChecked()):
             self.show_message(
-                tr("Please select the imagery type under the Time Slider section."),
+                tr(
+                    "Please select the imagery "
+                    "type under the Time Slider section."
+                ),
                 Qgis.Warning
             )
             return
@@ -1115,6 +1119,9 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         if group == PROJECT_INSTANCES_GROUP_NAME:
             site_feature = next(site_layer.getFeatures(), None)
+            project_folder = os.path.dirname(
+                site_layer.dataProvider().dataSourceUri()
+            )
 
             farmer_ids = []
             project_instances = []
@@ -1161,12 +1168,12 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
             task_counter = 0
 
-            self.project_dir = self.project_folder.filePath()
+            self.project_dir = project_folder
 
             for metadata in project_instances:
                 submit_result = report_manager.generate_site_report(
                     metadata,
-                    self.project_dir,
+                    project_folder,
                     temporal_info
                 )
                 if not submit_result.success:
@@ -1204,7 +1211,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 f"Generating {len(farmer_ids)} report(s) ...")
             self.report_progress_dialog = ReportProgressDialog(
                 result,
-                self.project_dir,
+                project_folder,
                 True,
                 message=progress_message
             )
@@ -1212,7 +1219,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.report_progress_dialog.show()
 
         elif group == SITE_GROUP_NAME:
-
             if not self.is_project_info_valid():
                 return
 
@@ -1237,19 +1243,32 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 area
             )
 
+            self.project_dir = self.project_folder.filePath()
+            log(f"getting submit_result into {self.project_folder.filePath()}")
+
             submit_result = report_manager.generate_site_report(
                 metadata,
-                self.project_folder.filePath(),
+                self.project_dir(),
                 temporal_info
             )
+
             if not submit_result.success:
                 self.message_bar.pushWarning(
                     tr("Report Error"),
-                    tr("Unable to submit request for report. See logs for more details.")
+                    tr(
+                        "Unable to submit request for report. "
+                        "See logs for more details."
+                    )
                 )
                 return
+            submit_result.task.taskCompleted.connect(self.main_report_task)
 
-            self.report_progress_dialog = ReportProgressDialog(submit_result)
+            QgsApplication.taskManager().addTask(submit_result.task)
+
+            self.report_progress_dialog = ReportProgressDialog(
+                submit_result,
+                self.project_dir
+            )
             self.report_progress_dialog.setModal(False)
             self.report_progress_dialog.show()
 
@@ -1257,12 +1276,17 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.feedback.setProgress(progress)
 
     def report_terminated(self):
-        log(f"Report generation terminated ")
-        self.current_project_layer.setSubsetString('')
-
+        log(f"Report generation terminated")
+        self.current_project_layer.setSubsetString(
+            self.layer_subset_string
+        )
     def main_report_task(self, exception, result=None):
         self.report_progress_dialog._on_report_finished()
         self.current_project_layer.setSubsetString(
             self.layer_subset_string
         )
 
+    def main_report_task(self):
+        self.current_project_layer.setSubsetString(
+            self.layer_subset_string
+        )

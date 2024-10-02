@@ -90,9 +90,6 @@ class ReportManager(QtCore.QObject):
             return ReportSubmitResult(False, None, "-1")
 
         site_report_task = SiteReportReportGeneratorTask(context)
-        # task_id = self.task_manager.addTask(site_report_task)
-
-
         return ReportSubmitResult(True, feedback, None, site_report_task )
 
     def task_by_id(self, task_id: str) -> typing.Optional[SiteReportReportGeneratorTask]:
@@ -195,7 +192,7 @@ class ReportManager(QtCore.QObject):
         report_dir = os.path.normpath(f"{project_folder}/reports/sites") \
         if isinstance(metadata, SiteMetadata) \
             else (
-            os.path.normpath(f"{project_folder}/reports/project_instances")
+            os.path.normpath(f"{project_folder}/reports")
         )
         create_dir(report_dir)
 
