@@ -87,13 +87,8 @@ def create_dir(directory: str, log_message: str = ""):
     if not p.exists():
         try:
             p.mkdir()
-        except (FileNotFoundError, OSError):
-            log(log_message)
-
-
-def animation_state_change(value):
-    log(f"{value}")
-    pass
+        except (FileNotFoundError, OSError) as e:
+            log(f"{log_message}, {e}")
 
 
 class FileUtils:
@@ -123,6 +118,21 @@ class FileUtils:
         :rtype: str
         """
         absolute_path = f"{FileUtils.plugin_dir()}/data/report_templates/{file_name}"
+
+        return os.path.normpath(absolute_path)
+
+    @staticmethod
+    def style_file_path(file_name) -> str:
+        """Get the absolute path to the style file with the given name.
+        Caller needs to verify that the file actually exists.
+
+        :param file_name: Style file name including the extension.
+        :type file_name: str
+
+        :returns: The absolute path to the style file with the given name.
+        :rtype: str
+        """
+        absolute_path = f"{FileUtils.plugin_dir()}/data/style/{file_name}"
 
         return os.path.normpath(absolute_path)
 

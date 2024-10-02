@@ -9,8 +9,7 @@ import typing
 
 import uuid
 
-from datetime import datetime, timedelta
-from importlib.metadata import metadata
+from datetime import datetime
 
 # QGIS imports
 from qgis.PyQt import QtCore, QtGui, QtNetwork, QtWidgets
@@ -25,9 +24,11 @@ from qgis.core import (
     QgsFillSymbol,
     QgsInterval,
     QgsLayerTreeGroup,
+    QgsLayerTreeLayer,
     QgsPalLayerSettings,
     QgsProject,
     QgsTask,
+    QgsTextBackgroundSettings,
     QgsTextFormat,
     QgsTemporalNavigationObject,
     QgsUnitTypes,
@@ -46,9 +47,10 @@ from ..definitions.defaults import (
     PROJECT_AREAS,
     PLUGIN_ICON,
     PROJECT_INSTANCES_GROUP_NAME,
-    PROJECT_INSTANCE_BOUNDARY_STYLE,
     REPORT_SITE_BOUNDARY_STYLE,
-    SITE_GROUP_NAME, FARMER_ID_FIELD,
+    SITE_GROUP_NAME,
+    FARMER_ID_FIELD,
+    PROJECT_INSTANCE_STYLE,
 )
 from .attribute_form import AttributeForm
 from .report_progress_dialog import ReportProgressDialog
@@ -57,7 +59,8 @@ from ..models.base import IMAGERY, MapTemporalInfo
 from ..models.report import ReportSubmitResult, SiteMetadata, ProjectMetadata
 
 from ..resources import *
-from ..utils import animation_state_change, clean_filename, create_dir, log, tr
+from ..utils import clean_filename, create_dir, log, tr
+from ..utils import FileUtils
 
 
 WidgetUi, _ = loadUiType(
@@ -109,6 +112,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.restore_settings()
 
         self.project_folder.fileChanged.connect(self.project_folder_changed)
+        #
+        # self.prepare_layers()
 
         self.site_reference_le.textChanged.connect(self.save_settings)
         self.site_ref_version_le.textChanged.connect(self.save_settings)
@@ -195,6 +200,33 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         self.iface.projectRead.connect(self.prepare_time_slider)
 
+    # def prepare_layers(self):
+    #
+    #     root = QgsProject.instance().layerTreeRoot()
+    #
+    #     # Find or create the group
+    #     group = self.find_group_by_name(
+    #         PROJECT_INSTANCES_GROUP_NAME,
+    #         root
+    #     )
+    #
+    #     if not group:
+    #         return
+    #
+    #     for child in group.children() or []:
+    #         if not isinstance(child, QgsLayerTreeLayer):
+    #             continue
+    #
+    #         layer = child.layer()
+    #
+    #         instance_symbol = QgsFillSymbol.createSimple(
+    #             PROJECT_INSTANCE_BOUNDARY_STYLE
+    #         )
+    #         layer.renderer().setSymbol(
+    #             instance_symbol
+    #         )
+    #         layer.triggerRepaint()
+
     def animation_loop_toggled(self, value):
         """
         Handles the toggling of the animation loop checkbox.
@@ -267,6 +299,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.project_instances_changed()
 
     def project_instances_changed(self):
+        self.drawing_frame.setEnabled(False)
 
         # Define file filter for shapefiles only
         file_filter = "Shapefiles (*.shp);;All Files (*)"
@@ -284,29 +317,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         if layer.isValid():
 
-            label_settings = QgsPalLayerSettings()
-            label_settings.fieldName = FARMER_ID_FIELD
-
-            text_format = QgsTextFormat()
-            text_format.setFont(QtGui.QFont("Arial", 10))
-            text_format.setSize(12)
-
-            label_settings.setFormat(text_format)
-            label_settings.enabled = True
-
-            labeling = QgsVectorLayerSimpleLabeling(label_settings)
-            layer.setLabeling(labeling)
-
-            layer.setLabelsEnabled(True)
-
-            layer.triggerRepaint()
-
-            instance_symbol = QgsFillSymbol.createSimple(
-                PROJECT_INSTANCE_BOUNDARY_STYLE
-            )
-            layer.renderer().setSymbol(
-                instance_symbol
-            )
+            style_file = FileUtils.style_file_path(PROJECT_INSTANCE_STYLE)
+            layer.loadNamedStyle(style_file)
             layer.triggerRepaint()
 
             # Add the layer to the site boundaries
@@ -327,7 +339,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                         break
                 main_group = main_group if main_group is not None else root
 
-                group = main_group.insertGroup(0, PROJECT_INSTANCES_GROUP_NAME)
+                group = main_group.insertGroup(
+                    0,
+                    PROJECT_INSTANCES_GROUP_NAME
+                )
 
             # Add the layer to the group
             group.addLayer(layer)
@@ -521,6 +536,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     group_tree.setItemVisibilityCheckedRecursive(show)
 
     def start_drawing(self):
+
+        if not self.drawing_frame.isEnabled():
+            self.drawing_frame.setEnabled(True)
+            return
 
         if self.site_reference_le.text() is None or self.site_reference_le.text().replace(' ', '') is '':
             self.show_message(
@@ -1152,7 +1171,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 )
                 if not submit_result.success:
                     self.message_bar.pushWarning(
-                        tr("Site Report Error"),
+                        tr("Report Error"),
                         tr("Unable to submit request "
                            "for report. See logs for more details."
                            )
@@ -1225,7 +1244,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
             if not submit_result.success:
                 self.message_bar.pushWarning(
-                    tr("Site Report Error"),
+                    tr("Report Error"),
                     tr("Unable to submit request for report. See logs for more details.")
                 )
                 return

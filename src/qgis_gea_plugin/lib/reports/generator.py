@@ -35,18 +35,17 @@ from ...definitions.defaults import (
     LANDSAT_2013_LAYER_SEGMENT,
     LANDSAT_IMAGERY_GROUP_NAME,
     OVERVIEW_ZOOM_OUT_FACTOR,
-    RECENT_IMAGERY_GROUP_NAME,
-    REPORT_LANDSCAPE_DESCRIPTION_SUFFIX,
     REPORT_SITE_BOUNDARY_STYLE,
-    SITE_GROUP_NAME, PROJECT_INSTANCE_BOUNDARY_STYLE
+    PROJECT_INSTANCE_STYLE
 )
-from ...models.base import IMAGERY, LayerNodeSearch
+from ...models.base import LayerNodeSearch
 from ...models.report import (
     SiteReportContext,
     ReportOutputResult, SiteMetadata, ProjectMetadata
 )
 from ...utils import (
     clean_filename,
+    FileUtils,
     log,
     tr,
 )
@@ -192,7 +191,7 @@ class SiteReportReportGeneratorTask(QgsTask):
 
             project.layoutManager().addLayout(self._output_report_layout)
             log(
-                f"Successfully generated the site report for "
+                f"Successfully generated the report for "
                 f"{self.report_name}."
             )
 
@@ -250,7 +249,7 @@ class SiteReportReportGeneratorTask(QgsTask):
             return False
 
     def _generate_report(self) -> bool:
-        """Generate site report.
+        """Generate report.
 
         :returns: Returns True if the process succeeded, else False.
         :rtype: bool
@@ -322,7 +321,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         return True
 
     def _set_metadata_values(self):
-        """Set the site metadata values."""
+        """Set the report metadata values."""
 
         if isinstance(self._metadata, SiteMetadata):
             self.set_label_value("inception_date_label", self._metadata.inception_date)
@@ -417,7 +416,7 @@ class SiteReportReportGeneratorTask(QgsTask):
         return map_item
 
     def _set_site_layer(self):
-        """Fetch the site boundary layer.
+        """Fetch the project boundary layer.
         """
 
         site_path = settings_manager.get_value(
@@ -453,10 +452,13 @@ class SiteReportReportGeneratorTask(QgsTask):
             site_layer.renderer().setSymbol(site_symbol)
             site_layer.triggerRepaint()
         else:
-            site_symbol = QgsFillSymbol.createSimple(PROJECT_INSTANCE_BOUNDARY_STYLE)
-            site_layer.renderer().setSymbol(site_symbol)
+            style_file = FileUtils.style_file_path(PROJECT_INSTANCE_STYLE)
+            site_layer.loadNamedStyle(style_file)
+            site_layer.triggerRepaint()
 
-            site_layer.setSubsetString(f"\"FarmerID\" = '{self._context.metadata.farmer_id}'")
+            site_layer.setSubsetString(
+                f"\"FarmerID\" = '{self._context.metadata.farmer_id}'"
+            )
 
             site_layer.triggerRepaint()
 
@@ -529,7 +531,7 @@ class SiteReportReportGeneratorTask(QgsTask):
     def _configure_map_items_zoom_level(self):
         """Set layers and zoom levels of map items."""
         if self._site_layer is None:
-            tr_msg = tr("Site layer not found or shapefile is invalid")
+            tr_msg = tr("Project layer not found or shapefile is invalid")
             self._error_messages.append(tr_msg)
             return
 
