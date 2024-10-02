@@ -1,3 +1,14 @@
+---
+title: GEA Reforestation
+summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+    - Ketan Bamniya
+date: 19-06-2024
+some_url: https://github.com/kartoza/qgis-gea-plugin
+copyright: Copyright 2024
+contact: marketing@geoterra360.pt
+license: the reforestation tool is made available to Global Evergreening Global Alliance (GEA) under a non-exclusive, sub-licensable, perpetual, irrevocable, royalty-free licence. This which allows GEA to use and replicate the QGIS plugin and tool for the appointed project areas in Kenya, Uganda, and Malawi; and any other carbon offset future project areas managed, operated, and undertaken by GEA. The reforestation tool concept, functionality, and operations, as well as the physical QGIS plugin are covered, considered, and always remain the Intellectual Property of GT360.
+---
+
 # GEA Reforestation QGIS Plugin User Manual
 
 ![Shared folder](./img/gea-reforestation-1.png)
@@ -162,3 +173,27 @@
     * Add new features to the map using the vector toolbar.
 
     By following these steps and using the various tools and options in the QGIS interface, the user can effectively use the GEA Reforestation QGIS Plugin to manage and analyse your reforestation project data.
+
+### How to change the image styles in QGIS symbology
+
+**To change the image styles in QGIS symbology, follow these steps:**
+
+Open QGIS and Load your Project: Start QGIS and open your existing project.
+
+1. **Select the Layer Properties:** In the Layers panel, right-click on the layer for which you want to change the symbology and select `Properties`.
+
+![Properties](./img/image-style-1.png)
+
+2. **Open the Symbology Tab:** In the Layer Properties dialog, click on the `Symbology` tab on the left side.
+
+![Symbology](./img/image-style-2.png)
+
+3. **Adjust Contrast Enhancement:** Locate the settings for contrast enhancement. In the contrast enhancement dropdown, select the `Stretch to MinMax"` option.
+
+![Contrast](./img/image-style-3.png)
+
+4. **Configure Min/Max Value Settings:** Click on the `Min/Max value setting` to view more options. Choose the `Mean +/- standard deviation` option.
+
+5. **Apply/OK Button:** Click `Apply` to apply the changes and continue making adjustments. Alternatively, click `OK` to apply the changes and close the Layer Properties window.
+
+By following these steps, the user can enhance the image quality and make it appear more realistic.

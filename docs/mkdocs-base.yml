@@ -34,8 +34,8 @@ markdown_extensions:
                             class: mermaid
                             format: !!python/name:pymdownx.superfences.fence_code_format
         - pymdownx.emoji:
-                  emoji_generator: !!python/name:materialx.emoji.to_svg
-                  emoji_index: !!python/name:materialx.emoji.twemoji  
+                  emoji_index: !!python/name:material.extensions.emoji.twemoji
+                  emoji_generator: !!python/name:material.extensions.emoji.to_svg 
 
 # Navigation
 nav:
@@ -59,7 +59,6 @@ nav:
                           - GEA Reforestation: user/manual/gea-reforestation.md
                           - GEA Reforestation Tool (Plugin): user/manual/gea-reforestation-tool.md
                           - NICFI Imagery: user/manual/nicfi-imagery.md
-                          - Image Style: user/manual/image-style.md
                           - Sign Up: user/manual/sign-up.md
                           - Login: user/manual/login.md
                   - user/user-workflow.md
