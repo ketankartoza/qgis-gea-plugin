@@ -10,7 +10,7 @@ import subprocess
 
 import pathlib
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsTaskWrapper
 from qgis.gui import QgsGui
 
 from qgis.PyQt import QtCore, QtGui, QtWidgets
@@ -56,6 +56,7 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         self.report_output_dir = None
 
         self._submit_result = submit_result
+        self._task = submit_result.task
         self._feedback = self._submit_result.feedback
         self._feedback.progressChanged.connect(self._on_progress_changed)
 
@@ -81,7 +82,6 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
 
         self.pg_bar.setValue(int(self._feedback.progress()))
 
-        self._task = None
         if self._task is not None:
             self._task.taskCompleted.connect(self._on_report_finished)
             self._task.taskTerminated.connect(self._on_report_error)
@@ -124,9 +124,13 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         )
         self.lbl_message.setText(tr_msg)
 
-        log(tr(f"Error generating report, {self._task._error_messages} \n"))
+        if not isinstance(self._task, QgsTaskWrapper):
+            log(tr(f"Error generating report, {self._task._error_messages} \n"))
 
-        log(tr(f"{self._task._result.errors}")) if self._task._result else None
+            log(tr(f"{self._task._result.errors}")) if self._task._result else None
+        else:
+            log(f"Probem running task {self._task.status}")
+
 
     @property
     def report_result(self) -> typing.Optional[ReportOutputResult]:
@@ -137,7 +141,9 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         task is not complete or an error occurred.
         :rtype: ReportResult
         """
-        if self._task is None:
+        if (self._task is None or
+                isinstance(self._task, QgsTaskWrapper)
+        ):
             return None
 
         return self._task.result
@@ -149,8 +155,8 @@ class ReportProgressDialog(QtWidgets.QDialog, WidgetUi):
         if self.report_result is None:
             log(
                 tr(
-                    "Output from the report generation"
-                    " process could not be determined."
+                    "Output from the report generation "
+                    "process could not be determined."
                 )
             )
 

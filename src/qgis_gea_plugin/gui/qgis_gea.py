@@ -1244,11 +1244,10 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
 
             self.project_dir = self.project_folder.filePath()
-            log(f"getting submit_result into {self.project_folder.filePath()}")
 
             submit_result = report_manager.generate_site_report(
                 metadata,
-                self.project_dir(),
+                self.project_dir,
                 temporal_info
             )
 
@@ -1261,7 +1260,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     )
                 )
                 return
-            submit_result.task.taskCompleted.connect(self.main_report_task)
+            submit_result.task.taskCompleted.connect(self.site_report_finished)
 
             QgsApplication.taskManager().addTask(submit_result.task)
 
@@ -1276,7 +1275,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.feedback.setProgress(progress)
 
     def report_terminated(self):
-        log(f"Report generation terminated")
         self.current_project_layer.setSubsetString(
             self.layer_subset_string
         )
@@ -1286,7 +1284,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.layer_subset_string
         )
 
-    def main_report_task(self):
+    def site_report_finished(self):
         self.current_project_layer.setSubsetString(
             self.layer_subset_string
         )
