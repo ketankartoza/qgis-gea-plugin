@@ -150,7 +150,7 @@ This tutorial, will walk you through using the `Drawing Tool` to create project 
 
 * Author of the Site Capture: Enter the name of the person who recorded the site details.
 
-* Country: Select the project's country from the dropdown list.
+* Project: Select the project's origin from the dropdown list.
 
 * Project Folder: Choose the folder where plugin data will be stored.
     
@@ -162,10 +162,50 @@ This tutorial, will walk you through using the `Drawing Tool` to create project 
 
    - Important: Clear the polygon before saving a new project, as existing shape files in the Sites folder won't be automatically deleted.
 
+## How to import project instance
+
+
+**Accessing Import project instance:** Click on the 1️⃣ `Import project instance` on the qgis  interface.
+
+![Image Project Instance](./img/gea-reforestation-tool-16.png)
+
+After clicking on the `Import Project Instance`, a pop-up window will appear. Locate your project instance directory, then select the instance and click the 1️⃣ `Open` button.
+
+![Select Project Instance Window](./img/gea-reforestation-tool-17.png)
+
+After selecting the desired project instance, a `Project Instance Attributes` pop-up window will appear, where you need to fill in some information to proceed.
+
+![Project Instance Attributes](./img/gea-reforestation-tool-18.png)
+
+- **Report Author :** Name of the person generating the report.
+- **Project :** Select the origin of the project from dropdown menu.
+- **Cencel :** Click on the `Cancel` button to stop the process.
+- **Save :** Click on the `Save` button to complete the process.
+
+**Error Message:** If the author, project, IncepDate, or area names are already present in the project instance, you will encounter this error.
+
+![Error](./img/gea-reforestation-tool-20.png)
+
+* **No:**  Cancel the process.
+* **Yes:** Overwrite names.
+
+After saving the instance, your selected instance will be added to the project instance in the layer section.
+
+![Import Project Instances](./img/gea-reforestation-tool-19.png)
+
 ## Automated Report Generation
 
 ![Report](./img/gea-reforestation-tool-13.png)
 
-**Generating an Automated Report:** After drawing and saving your project area, click the Generate Report` button. The system will create an automated report based on your project area and details.
+**Generating an Automated Report:** After drawing and saving your project area, click on the 1️⃣ `Generate Report` button, upon clicking the button report generation process will start and the pop-up window will open, showing the status of the process.
+
+![Report Progress Dialog](./img/gea-reforestation-tool-21.png)
+
+* **Close:**  Close the dialog to continue working on your project.
+* **Open PDF:** Open the generated report PDF in a new pop-up window  (Shown below).
+
+![Report PDF](./img/gea-reforestation-tool-22.png)
 
 By following these steps, you will be able to effectively use the Drawing Tool to define your project areas and generate automated reports for the GEA Reforestation project.
+
+
