@@ -1,4 +1,3 @@
-
 mkdocs-with-pdf
 mkdocs-material>=9.5.32
 mdx_gh_links
@@ -10,5 +9,6 @@ mkdocs-enumerate-headings-plugin
 mkdocs-git-revision-date-localized-plugin
 # needed for the create-uuid.py helper script
 shortuuid
+cffi
 # Needed for mkdocstrings python documentation generator
 black
