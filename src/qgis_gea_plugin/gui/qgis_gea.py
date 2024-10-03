@@ -337,7 +337,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     if isinstance(child, QgsLayerTreeGroup):
                         main_group = child
                         break
-                main_group = main_group if main_group is not None else root
+                main_group = main_group \
+                    if main_group is not None else root
 
                 group = main_group.insertGroup(
                     0,
