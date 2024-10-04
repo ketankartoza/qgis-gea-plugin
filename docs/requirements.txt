@@ -1,5 +1,5 @@
 mkdocs-with-pdf
-mkdocs-material
+mkdocs-material >= 9.5.32
 mdx_gh_links
 mkdocs-pdf-export-plugin
 mkdocstrings-python
@@ -9,7 +9,7 @@ mkdocs-enumerate-headings-plugin
 mkdocs-git-revision-date-localized-plugin
 # needed for the create-uuid.py helper script
 # pymdown-extensions
-# mkdocs-material-extensions
+mkdocs-material-extensions
 shortuuid
 # cffi
 # Needed for mkdocstrings python documentation generator
