@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -13,7 +13,7 @@ license: the reforestation tool is made available to Global Evergreening Global 
 
 This is the homepage for all user-related documentation.
 
-The user content is divided into three sections:
+The user content is divided into five sections:
 
 - The [quickstart tutorial](quickstart/index.md) aims to get you familiar with the basics of the platform in around 5 minutes.
 
@@ -23,4 +23,4 @@ The user content is divided into three sections:
 
 - [user workflow](./user-workflow.md) This document provides detailed instructions on the workflow, including how users can download and utilise project data.
 
-- [Appendix1](./Appendix1.md) provides the details about the liabilities, exclusion masks and imageries.
+- [Appendix 1](./Appendix1.md) provides the details about the liabilities, exclusion masks and imageries.

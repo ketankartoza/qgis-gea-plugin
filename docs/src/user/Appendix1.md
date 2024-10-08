@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -31,10 +31,10 @@ The current, very high-resolution Google imagery is digitally streamed on-demand
 
 The Planet imagery is also digitally streamed on-demand, with permission, from Norway's International Climate & Forests Initiative (NICFI) with Planet Labs (https://www.planet.com/nicfi/). Detailed image backdrops are provided for 6-monthly periods (i.e. December and June) for the 2015 – 2020 time window (5m image resolution).
 
-The historical Landsat imagery is pre-loaded data, included as part of the QGIS project data package, and provides a less detailed set of reference pictures, but over a much older and longer time frame that neither the Planet or Google image sources can.  The Landsat image backdrops provide annualized landscape representations for 1990, 1995, 2000, 2013, 2014 & 2015 (15m and 30m resolutions, depending on age). 
+The historical Landsat imagery is pre-loaded data, included as part of the QGIS project data package, and provides a less detailed set of reference pictures, but over a much older and longer time frame that neither the Planet or Google image sources can.  The Landsat image backdrops provide annualised landscape representations for 1990, 1995, 2000, 2013, 2014 & 2015 (15m and 30m resolutions, depending on age). 
 The historical Landsat imagery is also presented as 3-band, natural colour mosaics, with each mosaic representing a seamless coverage across the full extent of each project area.  The content within each Landsat-generated backdrop imagery has been constructed from all available archive imagery, captured in the target year. As far as possible, the final backdrop mosaics have been constructed as cloud-free coverages, but in some of the older years, especially 1990, the lack of archive content has unfortunately, but unavoidably, resulted in some cloud-obscured areas remaining in the backdrop content; simply because there is insufficient imagery available to create cloud-free content. 
 
-The resolution of each image backdrop is based on the resolution of the source Landsat imagery, with 1990, 1995 being limited to 30m formats, whereas 2000 – 2023 inclusive are presented at 15m resolution by pan-merging spectral content with panchromatic band content.
+The resolution of each image backdrop is based on the resolution of the source Landsat imagery, with 1990, and 1995 is limited to 30m formats, whereas 2000 – 2023 inclusive are presented at 15m resolution by pan-merging spectral content with panchromatic band content.
 
 The Landsat imagery for 2015 allows QGIS tool users to compare the level of landscape detail available from coarse resolution Landsat with comparable 2015 date 5m Planet imagery, and better understand the content in the exclusion masks, which have been modelled from Landsat sourced data. This is important for tool-user orientation, since the recent and current NICFI-Planet and Google base map image resolutions (5m and 50cm respectively), far exceed the resolution (30m) and detail used to model and construct the exclusion map coverages. 
 
@@ -50,15 +50,15 @@ For each project area, a series of raster-based exclusion “masks” have been 
 **4.1	Forest and Grassland Exclusion Masks**
 **4.1.2	Reference Land-Cover Datasets**
 
-Both the forest and grassland exclusion masks are derived from the time-series land-cover (LC) datasets that have been specifically generated for this project. The time-series LC datasets represent the 2003, 2013 and 2023 landscapes, and have been modelled from archival Landsat imagery. All available and suitable Landsat image acquisition dates within a target calendar year have been used, to ensure a multi-seasonal representation of landscape characteristics, and minimize any single-season interpretation bias.
+Both the forest and grassland exclusion masks are derived from the time-series land-cover (LC) datasets that have been specifically generated for this project. The time-series LC datasets represent the 2003, 2013 and 2023 landscapes, and have been modelled from archival Landsat imagery. All available and suitable Landsat image acquisition dates within a target calendar year have been used, to ensure a multi-seasonal representation of landscape characteristics, and minimise any single-season interpretation bias.
 
 The Landsat-based time-series LC datasets have all been time-extrapolated backward and forwards using models trained on an independently generated 2019 base reference LC dataset.
 
-The 2019 base reference LC data has been generated from multi-date 20m resolution Sentinel-2 imagery, representing both the 2019 calendar year (i.e. 01-2019 to 12-2019) and the 2019 growth years (i.e. 07-2018 to 06-2019 and 07-2019 to 06-2020), in conjunction with the GLAD/GEDI 2019 global tree canopy height data. The use of both a target calendar year and overlapping growth years helps minimize any seasonal anomalies resulting from drought or excessively wet periods. The Sentinel-2 LC modelling procedure is the GeoTerraImage in-house capability that leverages cloud archive and cloud computing capabilities to enable the auto-generation of standardized land-cover characteristics, that are based on all available and suitable Sentinel image acquisition dates within the target window.
+The 2019 base reference LC data has been generated from multi-date 20m resolution Sentinel-2 imagery, representing both the 2019 calendar year (i.e. 01-2019 to 12-2019) and the 2019 growth years (i.e. 07-2018 to 06-2019 and 07-2019 to 06-2020), in conjunction with the GLAD/GEDI 2019 global tree canopy height data. The use of both a target calendar year and overlapping growth years helps minimise any seasonal anomalies resulting from drought or excessively wet periods. The Sentinel-2 LC modelling procedure is the GeoTerraImage in-house capability that leverages cloud archive and cloud computing capabilities to enable the auto-generation of standardised land-cover characteristics, that are based on all available and suitable Sentinel image acquisition dates within the target window.
 
-Both the 2019 base reference LC and the time-series LC datasets describe landscape characteristics with the same standardized legend. The legend contains a range of structural/physiognomic defined vegetation cover characteristics (i.e. forest, thicket / low forest, dense woodland, open woodland, grassland, low shrub), as well as and water and bare ground surfaces. The LC classes do not attempt to describe any Land-Use (LU) characteristics in the landscape, as this is added at a later processing step, therefore grass-type crops such as maize would be described as “grassland” and tree crops, such as orchards, as “thicket” if the woody cover density was appropriate. LU content is added later. 
+Both the 2019 base reference LC and the time-series LC datasets describe landscape characteristics with the same standardised legend. The legend contains a range of structural/physiognomic defined vegetation cover characteristics (i.e. forest, thicket / low forest, dense woodland, open woodland, grassland, low shrub), as well as water and bare ground surfaces. The LC classes do not attempt to describe any Land-Use (LU) characteristics in the landscape, as this is added at a later processing step, therefore grass-type crops such as maize would be described as “grassland” and tree crops, such as orchards, as “thicket” if the woody cover density was appropriate. LU content is added later. 
 
-Table 1 provides definitions of each of the image-modelled LC classes contained in the standardized legend.
+Table 1 provides definitions of each of the image-modelled LC classes contained in the standardised legend.
 
 | Class | Name                     | Description                                                                                                                                                                                             |
 |-------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -79,10 +79,10 @@ The final inclusion and spatial extent of each legend class in the LC classifica
 
 The Sentinel-2 2019 reference LC dataset is generated with a 20m raster resolution format,
 equivalent to the source imagery. All the Landsat-generated time-series LCs are presented in a
-standardized 25m output format, which represents a re-sampling from the original 30m source data
+standardised 25m output format, which represents a re-sampling from the original 30m source data
 resolution. The 25m standard raster resolution is used as the most appropriate format to integrate
 the 20m Sentinel and 30m Landsat derived data outcomes. All derived final exclusion masks are also
-generated as a standardized 25m equivalent raster resolution. Figure 1 is a schematic of the LC
+generated as a standardised 25m equivalent raster resolution. Figure 1 is a schematic of the LC
 modelling process used to generate the 2019 reference LC, and the ultimate target year LC’s.
 
 ![Figure 1](./img/figure-1.png)

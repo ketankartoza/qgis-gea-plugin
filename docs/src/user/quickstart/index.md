@@ -20,7 +20,7 @@ The GEA Reforestation Tool consists of two main components:
 To use the tool, a few dependencies are required:
 
 1. QGIS: The tool runs in QGIS geographical software, which needs to be installed on the user's computer.
-2. A free Account for NICFI data: https://www.planet.com/nicfi
+2. A free account for NICFI data: https://www.planet.com/nicfi
 3. Planet_explorer: Some data (e.g., NICFI imagery) is streamed in via the Planet plugin, so this plugin needs to be installed in QGIS.
 
 The following Quick Start documentation will guide users on how to set up the tool with its dependencies:
@@ -28,12 +28,12 @@ The following Quick Start documentation will guide users on how to set up the to
 1. Get QGIS.
 2. The project file for an area of interest.
 3. Sign in for a Planet NICFI account.
-4. get the Plantet_Explorer Plugin.
-5. get the GEA Reforestation Plugin.
+4. Install the Plantet_Explorer Plugin.
+5. Install the GEA Reforestation Plugin.
 
 ## 1. How to install QGIS:
 
-*QGIS, short for Quantum Geographic Information System, is a free and open-source software used for working with geospatial data. This data can be easily edited and analysed within QGIS. As a cross-platform application, it is widely used in geographic data applications and runs on different operating systems, including Windows, Mac, and Linux. QGIS is written in Python, C++, and Qt.
+* QGIS, short for Quantum Geographic Information System, is a free and open-source software used for working with geospatial data. This data can be easily edited and analysed within QGIS. As a cross-platform application, it is widely used in geographic data applications and runs on different operating systems, including Windows, Mac, and Linux. QGIS is written in Python, C++, and Qt.
 
 - **Step 1: Visit the QGIS Website:** Open your web browser and go to the QGIS official website: [QGIS Download Page](https://www.qgis.org/download/).
 
@@ -111,11 +111,11 @@ Open the project folder that contains the following files and folders
 
 ### Opening the GEA QGIS Project
 
-To open the QGIS right click on the project file that ends in .qgz and choose to open it with QGIS
+To open the QGIS `project` right click on the project file that ends in .qgz and choose to open it with QGIS
 
 ![Open with QGIS](./img/quick-start-24.png)
 
-QGIS will then open with the folllowing project and map layers viewable. 
+QGIS will then open with the following project and map layers viewable. 
 
 ![QGIS Project](./img/quick-start-25.png)
 
@@ -135,7 +135,7 @@ In the open GEA QGIS project.
 
 ![Plugins option](./img/quick-start-1.png)
 
-- **Access the Plugins Menu:** Click on the 1️⃣ `Plugins` option available in the navbar section at the top of the QGIS window. Upon clicking you will see a dropdown menu.
+- **Access the Plugins Menu:** Click on the 1️⃣ `Plugins` in the Menu Bar at the top of the QGIS window. Upon clicking you will see a dropdown menu.
 
 ![Option](./img/quick-start-2.png)
 
@@ -157,13 +157,13 @@ After the installation, you will see the login option.
 
 After installing the plugin you will see the option for login to the `Planet Explorer` site. register to the site and log in to view Norway’s International Climate & Forests Initiative (NICFI), imagery.
 
-Click on the [sign-up](../manual/sign-up.md) to view the detailed documentation on how to sign up on the `Planet Explorer` site.
+Click [sign-up](../manual/sign-up.md) to view the detailed documentation on how to sign up on the `Planet Explorer` site.
 
-Click on the [login](../manual/login.md) to view the detailed documentation on how to log in on the `Planet Explorer` site.
+Click on [login](../manual/login.md) to view the detailed documentation on how to log in on the `Planet Explorer` site.
 
 ### Login
 
-Click on the login button and login to the planet explorer. Upon logging in you will see options like upload, draw, select or extent layers.
+In the Planet Explorer panel, click on the login button and login to the Planet Explorer. Upon logging in you will see options like upload, draw, select or extent.
 
 ![Planet imagery](./img/quick-start-7.png)
 
@@ -171,9 +171,11 @@ Click on the login button and login to the planet explorer. Upon logging in you 
 ## 5. How to Install GEA Reforestation Tool
 
 
-You must have the plugin URL. To get the plugin URL go to the [Plugins GitHub Repository](https://github.com/kartoza/qgis-gea-plugin)
+You need to have the plugin URL. To get the plugin URL, visit to the [Plugins GitHub Repository](https://github.com/kartoza/qgis-gea-plugin)
 
 ![Plugins GitHub Repository](./img/quick-start-20.png)
+
+* Copy the URL into the clipboard
 
 ### Steps to Install the Plugin
 
@@ -209,4 +211,4 @@ After successful installation, you will see the plugin icon.
 
 ## Conclusion
 
-By following the steps outlined in this Quick Start Guide, you will be able to set up your environment for effective use of plugins, access essential project data, and install necessary plugins like Planet_Explorer. This setup will enable you to view, analyse, and manage geospatial data, including streamed imagery from NICFI and Google, as well as local data like Landsat images and vector data layers.
+By following the steps outlined in this Quick Start Guide, you will be able to set up your environment for effective use of plugins, access essential project data, and install necessary plugins such as Planet_Explorer. This setup will enable you to view, analyse, and manage geospatial data, including streamed imagery from NICFI and Google, as well as local data like Landsat images and vector data layers.

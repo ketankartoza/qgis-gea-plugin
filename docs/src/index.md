@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -24,15 +24,15 @@ The GEA Reforestation Tool is a collaborative effort between:
 - The Cirrus Group
 - Kartoza
 
-It combines the power of GIS software with historical and current satellite imagery to help identify potential reforestation sites. The Tool includes a QGIS plugin and a custom QGIS project tailored for specific country zones of interest.
+It combines the power of GIS software with historical and current satellite imagery to help identify potential reforestation sites. The tool includes a QGIS plugin and a custom QGIS project tailored for specific country zones of interest.
 
 ## Development
 
 The reforestation site assessment tool and associated data content is a product-based service developed and provided by:
 
-- **GeoTerra360** (https://www.geoterra360.pt/)
-- **Kartoza** (https://kartoza.com/)
-- **CIRRUS** (https://www.linkedin.com/in/tony-knowles-94b9495/)
+- [GeoTerra360](https://www.geoterra360.pt/)
+- [Kartoza](https://kartoza.com/)
+- [CIRRUS](https://www.linkedin.com/in/tony-knowles-94b9495/)
 
 ## Documentation Sections
 
@@ -46,12 +46,12 @@ Get up and running with the GEA Reforestation Tool quickly. This section provide
 
 A comprehensive guide to using the GEA Reforestation Tool. This section covers all the features and functionalities of the tool, providing step-by-step instructions for various workflows.
 
-[Go to user guide](./user/guide/index.md)
+[Go to the user guide](./user/guide/index.md)
 
 ### User Manual
 
 Detailed technical documentation for the GEA Reforestation Tool. This section includes in-depth explanations of the tool's architecture, data requirements, and advanced usage scenarios.
 
-[Go to user manual](./user/manual/index.md)
+[Go to the user manual](./user/manual/index.md)
 
 We hope this documentation helps you make the most of the GEA Reforestation Tool. If you have any questions or need further assistance, please don't hesitate to reach out to our support team.
