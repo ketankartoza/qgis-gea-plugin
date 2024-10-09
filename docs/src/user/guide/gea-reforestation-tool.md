@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -21,7 +21,7 @@ There are two ways to install the plugin 1. from the repository and 2. install f
 
 **Prerequisites:**
 
-- QGIS installed on your computer. If QGIS is not installed on you system you can refer to [QGIS installation](../quickstart/index.md) for detailled instruction on how to install QGIS.
+- QGIS installed on your computer. If QGIS is not installed on your system you can refer to [QGIS installation](../quickstart/index.md) for detailed instructions on how to install QGIS.
 
 - The plugin URL (available from the [Plugins GitHub Repository](https://github.com/kartoza/qgis-gea-plugin))
 
@@ -95,7 +95,7 @@ Congratulations! You have successfully installed the GEA Reforestation Tool plug
 
 ## How to use the time slider?
 
-You can user the time slider for Historical Landsat Imagery as well as for Recent Nicfi Imagery.
+You can use the time slider for Historical Landsat Imagery as well as for Recent NICFI Imagery.
 
 ### Use time slider for Historical Landsat Imagery
 
@@ -113,17 +113,17 @@ Look for the play button near the slide bar. Click the play button to automatica
 
 Find the `Loop` checkbox next to the play button. Check this box if you want the playback to continuously loop through the imagery. When activated, the playback will restart from the beginning after reaching the most recent imagery.
 
-## Use time slider for Recent Nicfi Imagery
+## Use time slider for Recent NICFI Imagery
 
 ![Nicif imagery](./img/Timeslidernicfi.gif)
 
-Select the `Recent Imagery (Nicfi)` checkbox, The slide bar represents a timeline of available nicfi imagery.
+Select the `Recent Imagery (NICFI)` checkbox. The slide bar represents a timeline of available NICFI imagery.
 
 To view different time periods click, and drag the toggle on the slide bar. Move it left or right to navigate through time. As you move the toggle, the map canvas will update to display the corresponding imagery for that time period. Each increment on the slide bar represents a specific time period. Moving to the next or previous increment will show you how the landscape has changed over time.
 
 **Using the Play Button:**
 
-Look for the play button near the slide bar. Click the play button to automatically cycle through the nicif imagery. This feature is excellent for visualising changes over time without manual intervention.
+Look for the play button near the slide bar. Click the play button to automatically cycle through the NICFI imagery. This feature is excellent for visualising changes over time without manual intervention.
 
 **Activating the Loop Feature:**
 
@@ -131,13 +131,13 @@ Find the `Loop` checkbox next to the play button. Check this box if you want the
 
 ## Drawing Tool
 
-This tutorial, will walk you through using the `Drawing Tool` to create project areas and how to generate automated reports.
+This tutorial will walk you through using the `Drawing Tool` to create project areas and how to generate automated reports.
 
-**Accessing the Drawing Tool:** Click on the 1️⃣ `Drawing project area` button, in the QGIS interface. Ensure you have fill the required fields. If the any field is missing, you will see an error message.
+**Accessing the Drawing Tool:** Click on the 1️⃣ `Drawing project area` button, in the QGIS interface. Ensure you have filled in the required fields. If field is missing, you will see an error message.
 
 ![Draw project](./img/gea-reforestation-tool-8.png)
 
-- For eg. if you miss entering the site reference the error will show on the top.
+- For example, if you forget to enter the site reference, an error will be displayed at the top.
 
     ![Error](./img/gea-reforestation-tool-9.png)
 

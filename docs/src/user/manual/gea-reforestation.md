@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -46,11 +46,11 @@ license: the reforestation tool is made available to Global Evergreening Global 
 
         ![Plugins](./img/gea-reforestation-6.png)
 
-    3.2 **Attribute Toolbar**
+    3.2 **Icon Toolbar**
 
     ![Attribut toolbar](./img/gea-reforestation-7.png)
 
-    The attribute toolbar offers many options, some of which are:
+    The map navigation toolbar offers many options, some of which are:
 
     1. **Pan:** Allows the user to pan the map to a specific location.
     2. **Zoom in:** Zooms in on the map to show more detail.
@@ -58,11 +58,11 @@ license: the reforestation tool is made available to Global Evergreening Global 
     4. **Full zoom:** Zooms in or out to the maximum extent.
     5. **Show map tips:** Displays additional information about the map, such as coordinates and scale.
 
-    3.3 **Vector Toolbar:**
+    3.3 **Digitising Toolbar:**
 
     ![Vector toolbar](./img/gea-reforestation-8.png)
 
-    The vector toolbar offers many options, some of which are:
+    The digitising toolbar offers many options, some of which are:
 
     1. **Current edits:** Displays the current editing state of the layer.
     2. **Toggle editing:** Toggles the editing mode on or off.
@@ -93,7 +93,7 @@ license: the reforestation tool is made available to Global Evergreening Global 
 
     ![Buffer](./img/layer-list-3.png)
 
-    3. **Proposed Site Boundaries:** Displays the proposed boundaries created by the user for the project. Check the `Proposed Site Boundaries` checkbox and The proposed boundaries will be shown on the map canvas with a red line.
+    3. **Proposed Site Boundaries:** Displays the proposed boundaries created by the user for the project. Check the `Proposed Site Boundaries` checkbox and the proposed boundaries will be shown on the map canvas with a red line.
 
     ![Proposed boundaries](./img/layer-list-4.png)
 
@@ -101,7 +101,7 @@ license: the reforestation tool is made available to Global Evergreening Global 
 
     ![Administrative areas](./img/layer-list-5.png)
 
-    - **Malawi 2 Country:** Displays the country boundaries of Malawi. Check the `Malawi 2 Country` checkbox to visualise the country boundaries, it will be shown on the map canvas with a green line.
+    - **Malawi 2 Country:** Displays the country boundaries of Malawi. Check the `Malawi 2 Country` checkbox to visualise the country boundaries, it will be shown on the map canvas with a green administrative boundary line.
 
         ![Country areas](./img/layer-list-6.png)
 

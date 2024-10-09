@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -13,11 +13,11 @@ license: the reforestation tool is made available to Global Evergreening Global 
 
 ## Why Logging In is Important
 
-Logging into Planet.com is crucial for accessing the latest NICFI imagery. Through Norway’s International Climate & Forests Initiative (NICFI), users can utilise Planet’s high-resolution, analysis-ready mosaics of the world's tropics. This data is essential for efforts to reduce and reverse the loss of tropical forests, combat climate change, and conserve biodiversity.
+Logging into Planet.com is important for accessing the latest NICFI imagery. Through Norway’s International Climate & Forests Initiative (NICFI), users can use Planet’s high-resolution, analysis-ready mosaics of the world's tropics. This data is essential for efforts to reduce and reverse the loss of tropical forests, combat climate change, and conserve biodiversity.
 
 ## Logging In
 
-Click on the 1️⃣ `Login` button. Upon clicking, the sign-in form will open.
+Click on the 1️⃣ `Login` button in QGIS. Upon clicking, the sign-in form will open.
 
 ![Login](./img/login-1.png)
 

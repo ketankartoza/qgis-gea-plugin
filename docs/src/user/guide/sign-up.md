@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -17,7 +17,7 @@ Welcome to the user guide for registering on Planet.com. This guide will walk yo
 
 ## Why Register on Planet.com?
 
-By registering on Planet.com, you can access the latest NICFI imagery. Through Norway’s International Climate & Forests Initiative (NICFI), users can now utilise Planet’s high-resolution mosaics to help reduce and reverse the loss of tropical forests, combat climate change, and conserve biodiversity.
+By registering on Planet.com, you can access the latest NICFI imagery. Through Norway’s International Climate & Forests Initiative (NICFI), users can use Planet’s high-resolution mosaics to help reduce and reverse the loss of tropical forests, combat climate change, and conserve biodiversity.
 
 ## Step-by-Step Registration Guide
 
