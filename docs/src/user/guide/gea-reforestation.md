@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -30,7 +30,7 @@ The folder should contain the following components:
 
 **Extracting the Project Folder**:
 
-- Download the project folder sharesd by the head office.
+- Download the project folder shared by the head office.
 
 ![Shared folder](./img/gea-reforestation-1.png)
 
@@ -49,37 +49,39 @@ The folder should contain the following components:
 
 ![QGIS interface](./img/gea-reforestation-7.png)
 
-1. **Attributs Toolbar:**
+1. **Icons Toolbar -**
 
-- **Pan**: Click on the 1️⃣ `Pan` icon, to pan the map canvas.
+    a. Map Navigation Toolbar icons
 
-- **Zoom In**: Click on the 2️⃣ `Zoom IN` icon, and drag to select the area you want to zoom in on on the map canvas.
+    - **Pan**: Click on the 1️⃣ `Pan` icon, to pan the map canvas.
 
-- **Zoom Out**: Click on the 3️⃣ `Zoom Out` icon, and drag to select the area you want to zoom out on the map canvas.
+    - **Zoom In**: Click on the 2️⃣ `Zoom In` icon, and drag to select the area you want to zoom in on the map canvas.
 
-- **Full Zoom**: Click on the 4️⃣ `Full Zoom` icon, to zoom to the full extent of the map.
+    - **Zoom Out**: Click on the 3️⃣ `Zoom Out` icon, and drag to select the area you want to zoom out on the map canvas.
 
-- **Show Map Tips**: Click on the 5️⃣ `Show Map Tips` icon, to display additional information about the map, such as coordinates and scale.
+    - **Full Zoom**: Click on the 4️⃣ `Full Zoom` icon, to zoom to the full extent of the map.
 
-![Attributes toolbar](./img/gea-reforestation-5.png)
+    - **Show Map Tips**: Click on the 5️⃣ `Show Map Tips` icon, to display additional information about the map, such as coordinates and scale.
 
-2. **Vector Toolbar:** 
+    ![Attributes toolbar](./img/gea-reforestation-5.png)
 
-- **Current edits:** 1️⃣ `Current edits` displays the current editing state of the layer.
+2. **Digitising toolbar icons:** 
 
-- **Toggle editing:** Click on the 2️⃣ to toggles the editing mode on or off.
+    - **Current edits:** 1️⃣ `Current edits` display the current editing state of the layer.
 
-- **Save layer edits:** Click on the 3️⃣ to save any changes made to the layer.
+    - **Toggle editing:** Click on the 2️⃣ to toggle the editing mode on or off.
 
-- **Add polygon feature:** Click on the 4️⃣ to creates a new polygon feature on the map.
+    - **Save layer edits:** Click on the 3️⃣ to save any changes made to the layer.
+
+    - **Add polygon feature:** Click on the 4️⃣ to create a new polygon feature on the map.
 
 ![Vector toolbar](./img/gea-reforestation-6.png)
 
-3. **Layer List:**
+3. **List of layer in the Layers Panel:**
 
 ![layer list](./img/gea-reforestation-8.png)
 
-You can utilise the `Layers List` panel to visualise and interact with the various layers in the project. In the Layers panel, you will see the following layers listed:
+You can use the `Layers` panel to visualise and interact with the various layers in the project. In the Layers panel, you will see the following layers listed:
 
 - Malawi 2 Area of Interest
 - Malawi 2 Buffer
@@ -131,11 +133,11 @@ Check the respective checkboxes to visualise the exclusion masks on the map canv
 
 - **Current Google Imagery:** Check the checkbox to view the most recent `Google imagery`.
 
-- **Recent NICFI Imagery:** To view the `NICFI` imagery, you need to turn off the Google Imagery and Historical Landsat Imagery layers first and select the recent nicfi imagery.
+- **Recent NICFI Imagery:** To view the `NICFI` imagery, you need to turn off the Google Imagery and Historical Landsat Imagery layers first and select the recent NICFI imagery.
 
 ![Nicfi](./img/gea-reforestation-12.png)
 
-    >NOTE: To view the NICFI imagery you need to register/login to the planet explore site. If you are not already register on the site you can refer the below links for the detailed documentation on register/login.
+    >NOTE: To view the NICFI imagery you need to register/log in to the Planet Explore site. If you are not already registered on the site you can refer to the below links for the detailed documentation on register/log in.
 
 - [Register to the Planet Explore site](./sign-up.md)
 
@@ -149,7 +151,7 @@ By selectively toggling the visibility of the different layers, you can customis
 
 With the GEA Reforestation QGIS project opened and the basic navigation tools explored, you are now ready to dive deeper into the project and start working on the reforestation activities. 
 
-## How to style image for better visualisation?
+## How to style an image for better visualisation?
 
 This user guide will show you how to change the image styles in QGIS symbology to enhance the quality and realism of your images.
 

@@ -1,6 +1,6 @@
 ---
 title: GEA REFORESTATION
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -35,7 +35,7 @@ Registering on Planet.com allows users to access the latest NICFI imagery. Throu
 
 3. **Can you describe the application of data from NICFI program in brief?:** Provide a brief description of how the user plans to use the data from the NICFI program. This information helps Planet understand the diverse applications of their data.
 
-4. **Please provide a link to your organization/lab/university that you might be working with:** Enter the URL of the organisation, lab, or university the user is affiliated with. This adds credibility to the user's application and helps Planet verify the user's affiliation.
+4. **Please provide a link to your organisation/lab/university that you might be working with:** Enter the URL of the organisation, lab, or university the user is affiliated with. This adds credibility to the user's application and helps Planet verify the user's affiliation.
 
 5. **Organisation type:** Select the type of organisation the users are associated with from the provided options. This helps categorise users and tailor communications and services.
 

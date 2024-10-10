@@ -127,7 +127,7 @@ Whenever you create a new file, you should add the standard header to the top of
 ```
 ---
 title: GeoRepo-OS Documentation 
-summary: GeoRepo is a UNICEF's geospatial web-based data storage and administrative boundary harmonization platform.
+summary: GeoRepo is a UNICEF's geospatial web-based data storage and administrative boundary harmonisation platform.
     - Tim Sutton
     - Dimas Tri Ciputra
     - Danang Tri Massandy

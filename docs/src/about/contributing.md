@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -125,7 +125,7 @@ Follow other PR title format on below.
     <Type>: Short Description (ref #111)
 ```
 
-* capitalize first letter of Type
+* capitalise first letter of Type
 * use present tense: 'change' not 'changed' or 'changes'
 
 #### Description

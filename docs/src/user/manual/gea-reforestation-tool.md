@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -29,7 +29,7 @@ Welcome to the GEA Reforestation Tool user manual. This guide will help you navi
 
 ![Historical Imagery](./img/gea-reforestation-tool-2.png)
 
-- **Recent Imagery (Nicfi) Checkbox Checked:** The map canvas will display recent imagery from NICFI.
+- **Recent Imagery (NICFI) Checkbox Checked:** The map canvas will display recent imagery from NICFI.
 
 ![Recent Imagery](./img/gea-reforestation-tool-3.png)
 
@@ -104,7 +104,7 @@ After selecting the desired project instance user will click on the `open` butto
 * **X:** Close the pop-up dialog box. 
 * **Report Author:** The name of the person generating the report.
 * **Project:** The name of the country where the project is located.
-* **Cancle:** Terminate the process.
+* **Cancel:** Terminate the process.
 * **Save:** Save the instance to proceed.
 
 **Error Message:** If the author, project, IncepDate, or area names are already present in the project instance, you will encounter this error.
@@ -133,7 +133,7 @@ After saving the instance, the selected instance will be added to the project in
     * **Close:** Cancel the process.
     * **Open PDF:** Open the PDF in a new pop-up window.
 
-    ## Genenrated Report
+    ## Generated Report
 
     This is the report generated after completing the process.
 
@@ -141,14 +141,14 @@ After saving the instance, the selected instance will be added to the project in
 
     1. **GEA Reforestation Site Report:** Displaying the report information.
         - **Date of Project Inception:** The date when the project started.
-        - **Version of Site Referrence:** The version of the site reference.
+        - **Version of Site Reference:** The version of the site reference.
         - **Date of Site Capture:** The date when the site was captured.
-        - **Site Refference:** The site reference.
+        - **Site Reference:** The site reference.
         - **Author of Site Capture:** The person who captured the site.
         - **Country Location:** The country where the project is located.
         - **Site Area:** The area of the site.
 
     2. **Site Location Maps:** Displaying the site location on the maps.
 
-    3. **Landscape Exclusion and Inclusion Areas:**  Displaying the Historical Landsat 2013 with and without exclusion masks and 
+    3. **Landscape Exclusion and Inclusion Areas:**  Displaying the Historical Landsat 2013 with and without exclusion masks and the
     proposed site.

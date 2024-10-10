@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -35,11 +35,11 @@ To use the NICFI imagery in QGIS, follow these steps:
 
 ![Google imagery](./img/nicfi-imagery-1.png)
 
-* Check the `Recent Nicfi Imagery` checkbox and then select the Nicfi imagery from the available imageries to view on the map canvas.
+* Check the `Recent NICFI Imagery` checkbox and then select the NICFI imagery from the available imageries to view on the map canvas.
 
 ![Nicfi imagery](./img/nicfi-imagery-2.png)
 
-4. **Nicfi imageries**
+4. **NICFI imageries**
 
 **PS Tropical Visual Biannaul Archive - December 2015**
 

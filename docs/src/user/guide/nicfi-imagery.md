@@ -1,6 +1,6 @@
 ---
 title: GEA Reforestation
-summary: Visualize historical imagery, access different landscape maps and generate reports for potential afforestation sites.
+summary: Visualise historical imagery, access different landscape maps and generate reports for potential afforestation sites.
     - Ketan Bamniya
 date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
@@ -30,23 +30,24 @@ This tutorial will guide you through accessing and using NICFI (Norway's Interna
 ## Step 2: Access NICFI Imagery in QGIS
 
 1. Open your QGIS project.
-2. Locate the layer list in your QGIS interface.
+
+2. Navigate to the layers panel.
 
 ## Step 3: Disable Current Google Imagery/Historical Landsat Imagery
 
-1. Uncheck the `Current Google Imagery` and `Historical Landsat Imagery` checkbox in the layer list to view the Nicfi imagery.
+1. Uncheck the `Current Google Imagery` and `Historical Landsat Imagery` checkbox in the layers panel to view the NICFI imagery.
 
 ![Google/historical imagery disabled](./img/nicfi-imagery-1.png)
 
 ## Step 4: Enable NICFI Imagery
 
-1. Check the 1️⃣ `Recent Nicfi Imagery` checkbox in the layer list to enable NICFI imagery.
+1. Check the 1️⃣ `Recent NICFI Imagery` checkbox in the layer list to enable NICFI imagery.
 
 ![NICFI imagery enabled](./img/nicfi-imagery-2.png)
 
 ## Step 5: Select NICFI Imagery
 
-1. After enabling NICFI imagery, you will see a list of available imageries.
+1. After enabling NICFI imagery, you will see a list of available imagery.
 2. Choose the imagery you want to view on the map canvas.
 
 ![Specific NICFI imagery enabled](./img/nicfi-imagery-3.png)
@@ -77,16 +78,16 @@ Each imagery set provides a visual representation of the tropical regions for th
 2. Use QGIS tools to analyse the imagery, such as:
    - Zoom in/out to examine areas of interest.
    - Use Pan to pan on the map canvas.
-   - See the tips usign the show map tips.
+   - See the tips using the show map tips.
 
 ## Tips for Using NICFI Imagery
 
-1. **Compare Time Periods**: Use different imagery dates to observe changes in tropical forests over time.
-2. **Combine with Other Data**: Overlay the NICFI imagery with other geographic data for comprehensive analysis.
-3. **Performance Optimization**: Remember that NICFI imagery is streamed on demand. If you experience slow loading, try zooming in to a smaller area or checking your internet connection.
+1. **Compare time periods**: Use different imagery dates to observe changes in tropical forests over time.
+2. **Combine with other data**: Overlay the NICFI imagery with other geographic data for comprehensive analysis.
+3. **Performance optimisation**: Remember that NICFI imagery is streamed on demand. If you experience slow loading, try zooming in to a smaller area or checking your internet connection.
 
 ## Conclusion
 
-NICFI imagery provides a powerful tool for analysing tropical regions. By following this guide, you can effectively access and utilise this valuable resource in your QGIS projects, supporting efforts in forest conservation, climate change mitigation, and sustainable development.
+NICFI imagery provides a powerful tool for analysing tropical regions. By following this guide, you can effectively access and use this resource in your QGIS projects, supporting efforts in forest conservation, climate change mitigation, and sustainable development.
 
 Remember, NICFI imagery is for non-commercial use only. Always comply with the usage terms and conditions set by NICFI and Planet.
