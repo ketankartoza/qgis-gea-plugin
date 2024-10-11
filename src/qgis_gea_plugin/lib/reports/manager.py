@@ -188,18 +188,32 @@ class ReportManager(QtCore.QObject):
             )
             return None
 
+        # Ensure if the main reports directory exists,
+        # create it if it doesn't exist.
+        main_reports_dir = os.path.normpath(f"{project_folder}/reports")
+
+        create_dir(main_reports_dir)
+
+        if not Path(main_reports_dir).exists():
+            log(
+                f"Reports directory does not exist.",
+                info=False
+            )
+            return None
+
         # Create 'reports' subdirectory
         report_dir = os.path.normpath(f"{project_folder}/reports/sites") \
         if isinstance(metadata, SiteMetadata) \
             else (
-            os.path.normpath(f"{project_folder}/reports")
+            main_reports_dir
         )
         create_dir(report_dir)
 
         # Assert that the directory was successfully created
         if not Path(report_dir).exists():
             log(
-                f"Reports directory could not be created in the project folder.",
+                f"Reports directory could not be"
+                f" created in the project folder.",
                 info=False
             )
             return None
