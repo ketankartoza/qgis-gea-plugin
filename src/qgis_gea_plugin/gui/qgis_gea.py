@@ -1150,7 +1150,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                     inception_date=inception_date,
                     author=author,
                     project=project,
-                    total_area=total_area,
+                    total_area=f"{total_area:,.2f}",
                 )
 
                 project_instances.append(metadata)
