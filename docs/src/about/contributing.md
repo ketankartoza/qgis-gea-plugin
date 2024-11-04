@@ -6,7 +6,7 @@ date: 19-06-2024
 some_url: https://github.com/kartoza/qgis-gea-plugin
 copyright: Copyright 2024
 contact: marketing@geoterra360.pt
-license: the reforestation tool is made available to Global Evergreening Global Alliance (GEA) under a non-exclusive, sub-licensable, perpetual, irrevocable, royalty-free licence. This which allows GEA to use and replicate the QGIS plugin and tool for the appointed project areas in Kenya, Uganda, and Malawi; and any other carbon offset future project areas managed, operated, and undertaken by GEA. The reforestation tool concept, functionality, and operations, as well as the physical QGIS plugin are covered, considered, and always remain the Intellectual Property of GT360.
+license: the reforestation tool is made available to Global Evergreening Global Alliance (GEA) under a non-exclusive, sub-licensable, perpetual, irrevocable, royalty-free licence. This allows GEA to use and replicate the QGIS plugin and tool for the appointed project areas in Kenya, Uganda, and Malawi; and any other carbon offset future project areas managed, operated, and undertaken by GEA. The reforestation tool concept, functionality, and operations, as well as the physical QGIS plugin are covered, considered, and always remain the Intellectual Property of GT360.
 ---
 
 # Contributing to [PROJECT_NAME]
@@ -19,7 +19,7 @@ feel free to propose changes to this document in a pull request.
 
 ## Reporting bugs
 
-Bugs are tracked as GitHub issues. Search the list and try reproduce on your
+Bugs are tracked as GitHub issues. Search the list and try to reproduce it on your
 local machine with a clean profile before you create an issue.
 When you create an issue, please provide the following information by filling
 in the template.
@@ -57,8 +57,8 @@ Create an issue and provide the following information:
 * **Provide specific examples to demonstrate the steps.** Include
   copy/paste-able snippets which you use in those examples, as Markdown code
   blocks.
-* **Include screenshots and animated GIFs** which helps demonstrate the steps
-  or point out the part of project which the suggestion is related to.
+* **Include screenshots and animated GIFs** which help demonstrate the steps
+  or point out the part of a project to which the suggestion is related to.
 * **Explain why this enhancement would be useful** to most users.
 * **List some other text editors or applications where this enhancement
   exists.**
@@ -79,7 +79,7 @@ through these `document`, `good first issue` and `help wanted` issues:
 ### Development workflow
 
 * Set up your development environment
-* Make change from a right branch
+* Make changes from the right branch
 * Be sure the code passes tests
 * Make a pull request
 
@@ -94,7 +94,7 @@ through these `document`, `good first issue` and `help wanted` issues:
 #### Checkout a branch
 
 * **main**: PR Base branch.
-* **production**: lastest release branch with distribution files. Never make a PR on this.
+* **production**: latest release branch with distribution files. Never make a PR on this.
 * **gh-pages**: API docs, examples and demo
 
 #### Check code style
@@ -117,7 +117,7 @@ Make your pull request, then describe your changes.
 
 #### Title
 
-Follow other PR title format on below.
+Follow other PR title formats on below.
 
 ```
     <Type>: Short Description (fix #111)
@@ -125,13 +125,13 @@ Follow other PR title format on below.
     <Type>: Short Description (ref #111)
 ```
 
-* capitalise first letter of Type
+* capitalise the first letter of the Type
 * use present tense: 'change' not 'changed' or 'changes'
 
 #### Description
 
 If it has related issues, add links to the issues(like `#123`) in the description.
-Fill in the [Pull Request Template](../developer/guide/templates/pull-request-template.md) by check your case.
+Fill in the [Pull Request Template](../developer/guide/templates/pull-request-template.md) by checking your case.
 
 ## Code of conduct
 
