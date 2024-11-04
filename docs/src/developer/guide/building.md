@@ -15,17 +15,17 @@ This section covers the process of building and running the application from you
 
 🚩 Make sure you have gone through the [IDE Setup Process](ide-setup.md) before following these notes.
 
-Press `Ctrl -> P` 1️⃣ and then `>`and search for `Rebuild`. Select `Dev Containers: Rebuild and Reopen in Container`2️⃣. This will essentially mount your code tree inside a docker container and switch the development context of VSCode to be inside the container where all of the python etc. dependencies will be installed.
+Press `Ctrl -> P` 1️⃣ and then `>` and search for `Rebuild`. Select `Dev Containers: Rebuild and Reopen in Container`2️⃣. This will essentially mount your code tree inside a docker container and switch the development context of VSCode to be inside the container where all of the python etc. dependencies will be installed.
 
 ![image.png](img/building-1.png)
 
-Once the task is running, a notification 1️⃣ will be shown in the bottom right of the VSCode window. Clicking in the notification will show you the setup progress 2️⃣. Note that this make take quite a while depending on the internet bandwidth you have and the CPU power of your machine.
+Once the task is running, a notification 1️⃣ will be shown in the bottom right of the VSCode window. Clicking on the notification will show you the setup progress 2️⃣. Note that this may take quite a while depending on the internet bandwidth you have and the CPU power of your machine.
 
 ![image.png](img/building-2.png)
 
 ## Open a dev container terminal
 
-Open  terminal within the dev container context by clicking the `+`icon in the terminal pane 1️⃣. The new terminal 2️⃣ will show up in the list of running terminals 3️⃣
+Open  the terminal within the dev container context by clicking the `+`icon in the terminal pane 1️⃣. The new terminal 2️⃣ will show up in the list of running terminals 3️⃣
 
 ![image.png](img/building-3.png)
 
@@ -52,7 +52,7 @@ cd /home/web/project/django_project
 python manage.py createsuperuser
 ```
 
-During this process you will be prompted for your user name (defaults to root), email address and a password (which you need to confirm). Complete these as needed.
+During this process, you will be prompted for your user name (defaults to root), email address and a password (which you need to confirm). Complete these as needed.
 
 
 ## Viewing your test instance
