@@ -188,7 +188,7 @@ After selecting the desired project instance, a `Project Instance Attributes` po
 ![Project Instance Attributes](./img/gea-reforestation-tool-18.png)
 
 - **Report Author :** Name of the person generating the report.
-- **Project :** Select the origin of the project from dropdown menu.
+- **Project :** Select the origin of the project from the dropdown menu.
 - **Cencel :** Click on the `Cancel` button to stop the process.
 - **Save :** Click on the `Save` button to complete the process.
 
