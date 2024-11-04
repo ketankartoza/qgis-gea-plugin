@@ -140,7 +140,7 @@ The original content format of the forest, grassland and wetland exclusion masks
 
 **4.4.1	Forest and Grassland Exclusion Mask Modifications**
 
-Both the forest and grassland exclusion masks have been content modified to align with a minimum feature area of 0.5 Ha. This 0.5 Ha area is equivalent to 8 raster cells when raster cell resolution is equivalent to 25 x 25m. All exclusion content classified cells that are considered interconnected clusters based on shared cell edges or cell corners have been removed from the exclusion mask content. This spatially cleaning process also results in a “cleaner” exclusion area coverage, resulting from the removal of small, isolated exclusion cells, commonly referred to as “salt-and-pepper” data pattern noise. No change has been made to any potential re-afforestation areas (not covered by exclusion mask content), regardless of the areas involved.
+Both the forest and grassland exclusion masks have been content modified to align with a minimum feature area of 0.5 Ha. This 0.5 Ha area is equivalent to 8 raster cells when raster cell resolution is equivalent to 25 x 25m. All exclusion content classified cells that are considered interconnected clusters based on shared cell edges or cell corners have been removed from the exclusion mask content. This spatial cleaning process also results in a “cleaner” exclusion area coverage, resulting from the removal of small, isolated exclusion cells, commonly referred to as “salt-and-pepper” data pattern noise. No change has been made to any potential re-afforestation areas (not covered by exclusion mask content), regardless of the areas involved.
 
 Both the modified forest and grassland masks have had all overlapping areas with the wetland mask removed, so that all forest, grassland and wetland masks are all spatially exclusive against each other.
 
@@ -149,8 +149,8 @@ Both the modified forest and grassland masks have had all overlapping areas with
 The wetland exclusion mask has been content modified to better represent landscape contiguous
 (wetland) features, and remove model-generated “salt &amp; pepper” data pattern noise. Specifically,
 this has involved the in-filling of small non-classified data “holes” within and surrounded by wetland
-feature areas (up to 1 ha in extent), and removal of single, isolated wetland-classified cells. This
-spatially cleaning process also results in a “cleaner”, more homogenous representation of wetland
+feature areas (up to 1 ha in extent), and the removal of single, isolated wetland-classified cells. This
+spatial cleaning process also results in a “cleaner”, more homogenous representation of wetland
 areas across the project landscape. It also excluded model generated “islands” of possible
 reforestation sites from within wetland areas.
 
@@ -160,7 +160,7 @@ Project Zone.
 ![Figure 3](./img/figure-3.png)
 
 Figure 3. Forest, Grassland and Wetland exclusion masks for the Malawi-south Project Zone extent,
-with close-up detail. Remaining grey background areas are available for reafforestation.
+with close-up detail. The remaining grey background areas are available for reafforestation.
 
 Table 2. Modelling rules applied to the time-series LC data to determine the Forest and Grassland exclusion areas.
 

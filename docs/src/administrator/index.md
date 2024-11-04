@@ -12,7 +12,7 @@ license: the reforestation tool is made available to Global Evergreening Global 
 # For administrators
 <!-- To Be Populated -->
 
-This is the homepage for all administrator related documentation.
+This is the homepage for all administrator-related documentation.
 
 The content is divided into two sections:
 

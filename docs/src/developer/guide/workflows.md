@@ -18,7 +18,7 @@ license: the reforestation tool is made available to Global Evergreening Global 
 - Wait for it to be added to a Sprint
 - Functional Tests
 - Playwright Tests
-- Write end user documentation
+- Write end-user documentation
 
 ## Fixing a bug
 
@@ -36,4 +36,4 @@ Follow our [Commit message conventions](./templates/commit-message-convention.md
 ### Pull request template
 
 If it has related issues, add links to the issues(like `#123`) in the description.
-Fill in the [Pull Request template](./templates/pull-request-template.md) by check your case.
+Fill in the [Pull Request template](./templates/pull-request-template.md) by checking your case.
