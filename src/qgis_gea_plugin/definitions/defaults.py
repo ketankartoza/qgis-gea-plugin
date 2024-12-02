@@ -61,7 +61,7 @@ LANDSAT_IMAGERY_GROUP_NAME = "Historical Landsat Imagery"
 LANDSAT_2013_LAYER_SEGMENT = "Landsat 2013"
 MASK_NAME_SEGMENT = "Mask"
 RECENT_IMAGERY_GROUP_NAME = "Recent Nicfi Imagery"
-SITE_GROUP_NAME = "Proposed Site Boundaries"
+SITE_GROUP_NAME = "Drawn Areas of Interest"
 PROJECT_INSTANCES_GROUP_NAME = "Project Instances"
 
 SITE_REPORT_TEMPLATE_NAME = "reforestation_site.qpt"
