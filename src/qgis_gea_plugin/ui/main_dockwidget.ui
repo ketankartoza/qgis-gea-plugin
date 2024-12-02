@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>741</width>
-    <height>716</height>
+    <height>747</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GEA Afforestation tool</string>
+   <string>EPAL - Eligible Project Area Locator</string>
   </property>
   <widget class="QWidget" name="dock_widget_contents">
    <layout class="QVBoxLayout" name="verticalLayout">
