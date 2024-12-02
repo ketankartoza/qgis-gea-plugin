@@ -18,6 +18,7 @@ from qgis.PyQt.uic import loadUiType
 from qgis.core import (
     Qgis,
     QgsApplication,
+    QgsEditFormConfig,
     QgsEditorWidgetSetup,
     QgsFeedback,
     QgsField,
@@ -34,10 +35,12 @@ from qgis.core import (
     QgsUnitTypes,
     QgsVectorFileWriter,
     QgsVectorLayer,
-    QgsVectorLayerSimpleLabeling
+    QgsVectorLayerEditUtils,
+    QgsVectorLayerSimpleLabeling,
+
 )
 
-from qgis.gui import QgsLayerTreeView, QgsMessageBar
+from qgis.gui import QgsLayerTreeView, QgsMapToolCapture, QgsMessageBar
 
 # Relative imports
 from ..conf import Settings, settings_manager
@@ -642,20 +645,18 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         # Toggle layer editing
         self.drawing_layer.startEditing()
 
+        # Disable editing for all fields
+        qgis_version_int = Qgis.QGIS_VERSION_INT
 
-        # List of fields to disable editing on
-        fields_to_disable = [
-            "site_ref",
-            "version",
-            "author",
-            "country",
-            "inception_date",
-            "capture_date",
-            "area (ha)"
-        ]
-
-        # Disable editing for the specified fields
-        self.update_field_editing(self.drawing_layer, fields_to_disable, False)
+        # Check if the QGIS version is 3.32 or later (33200)
+        if qgis_version_int >= 33200:
+            form_config = QgsEditFormConfig()
+            form_config.setSuppress(Qgis.AttributeFormSuppression.On)
+            self.drawing_layer.setEditFormConfig(form_config)
+        else:
+            form_config = QgsEditFormConfig()
+            form_config.setSuppress(QgsEditFormConfig.FeatureFormSuppress.SuppressOn)
+            self.drawing_layer.setEditFormConfig(form_config)
 
         # Enable shape digitizing toolbar
         self.iface.shapeDigitizeToolBar().setVisible(True)
@@ -820,6 +821,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         # List of fields to enable editing on
         fields_to_enable = [
+            "id",
             "site_ref",
             "version",
             "author",
@@ -844,6 +846,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 self.last_computed_area = feature_area
 
             # Set attribute values
+            first_feature.setAttribute("id", 1)
             first_feature.setAttribute("site_ref", self.site_reference_le.text())
             first_feature.setAttribute("version", self.site_ref_version_le.text())
             first_feature.setAttribute("author", self.report_author_le.text())
