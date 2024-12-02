@@ -40,7 +40,7 @@ from qgis.core import (
 
 )
 
-from qgis.gui import QgsLayerTreeView, QgsMapToolCapture, QgsMessageBar
+from qgis.gui import QgsLayerTreeView, QgsMessageBar
 
 # Relative imports
 from ..conf import Settings, settings_manager
@@ -115,8 +115,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.restore_settings()
 
         self.project_folder.fileChanged.connect(self.project_folder_changed)
-        #
-        # self.prepare_layers()
 
         self.site_reference_le.textChanged.connect(self.save_settings)
         self.site_ref_version_le.textChanged.connect(self.save_settings)
@@ -202,33 +200,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.feature_count = 0
 
         self.iface.projectRead.connect(self.prepare_time_slider)
-
-    # def prepare_layers(self):
-    #
-    #     root = QgsProject.instance().layerTreeRoot()
-    #
-    #     # Find or create the group
-    #     group = self.find_group_by_name(
-    #         PROJECT_INSTANCES_GROUP_NAME,
-    #         root
-    #     )
-    #
-    #     if not group:
-    #         return
-    #
-    #     for child in group.children() or []:
-    #         if not isinstance(child, QgsLayerTreeLayer):
-    #             continue
-    #
-    #         layer = child.layer()
-    #
-    #         instance_symbol = QgsFillSymbol.createSimple(
-    #             PROJECT_INSTANCE_BOUNDARY_STYLE
-    #         )
-    #         layer.renderer().setSymbol(
-    #             instance_symbol
-    #         )
-    #         layer.triggerRepaint()
 
     def animation_loop_toggled(self, value):
         """
