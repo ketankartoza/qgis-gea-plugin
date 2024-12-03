@@ -12,7 +12,7 @@
     "tags": ["epal", "maps", "afforestation"],
     "category": ["plugins"],
     "hasProcessingProvider": "no",
-    "about": "Adds functionality inside QGIS to enable GEA afforestation visualization and analysis.",
+    "about": "Adds functionality inside QGIS to enable EPAL afforestation visualization and analysis.",
     "author": "Kartoza",
     "email": "info@kartoza.com",
     "description": "View, browse and navigate through imagery.",
