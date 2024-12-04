@@ -18,6 +18,7 @@ from qgis.PyQt.uic import loadUiType
 from qgis.core import (
     Qgis,
     QgsApplication,
+    QgsEditFormConfig,
     QgsEditorWidgetSetup,
     QgsFeedback,
     QgsField,
@@ -34,7 +35,9 @@ from qgis.core import (
     QgsUnitTypes,
     QgsVectorFileWriter,
     QgsVectorLayer,
-    QgsVectorLayerSimpleLabeling
+    QgsVectorLayerEditUtils,
+    QgsVectorLayerSimpleLabeling,
+
 )
 
 from qgis.gui import QgsLayerTreeView, QgsMessageBar
@@ -112,8 +115,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.restore_settings()
 
         self.project_folder.fileChanged.connect(self.project_folder_changed)
-        #
-        # self.prepare_layers()
 
         self.site_reference_le.textChanged.connect(self.save_settings)
         self.site_ref_version_le.textChanged.connect(self.save_settings)
@@ -199,33 +200,6 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         self.feature_count = 0
 
         self.iface.projectRead.connect(self.prepare_time_slider)
-
-    # def prepare_layers(self):
-    #
-    #     root = QgsProject.instance().layerTreeRoot()
-    #
-    #     # Find or create the group
-    #     group = self.find_group_by_name(
-    #         PROJECT_INSTANCES_GROUP_NAME,
-    #         root
-    #     )
-    #
-    #     if not group:
-    #         return
-    #
-    #     for child in group.children() or []:
-    #         if not isinstance(child, QgsLayerTreeLayer):
-    #             continue
-    #
-    #         layer = child.layer()
-    #
-    #         instance_symbol = QgsFillSymbol.createSimple(
-    #             PROJECT_INSTANCE_BOUNDARY_STYLE
-    #         )
-    #         layer.renderer().setSymbol(
-    #             instance_symbol
-    #         )
-    #         layer.triggerRepaint()
 
     def animation_loop_toggled(self, value):
         """
@@ -642,20 +616,18 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
         # Toggle layer editing
         self.drawing_layer.startEditing()
 
+        # Disable editing for all fields
+        qgis_version_int = Qgis.QGIS_VERSION_INT
 
-        # List of fields to disable editing on
-        fields_to_disable = [
-            "site_ref",
-            "version",
-            "author",
-            "country",
-            "inception_date",
-            "capture_date",
-            "area (ha)"
-        ]
-
-        # Disable editing for the specified fields
-        self.update_field_editing(self.drawing_layer, fields_to_disable, False)
+        # Check if the QGIS version is 3.32 or later (33200)
+        if qgis_version_int >= 33200:
+            form_config = QgsEditFormConfig()
+            form_config.setSuppress(Qgis.AttributeFormSuppression.On)
+            self.drawing_layer.setEditFormConfig(form_config)
+        else:
+            form_config = QgsEditFormConfig()
+            form_config.setSuppress(QgsEditFormConfig.FeatureFormSuppress.SuppressOn)
+            self.drawing_layer.setEditFormConfig(form_config)
 
         # Enable shape digitizing toolbar
         self.iface.shapeDigitizeToolBar().setVisible(True)
@@ -820,6 +792,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         # List of fields to enable editing on
         fields_to_enable = [
+            "id",
             "site_ref",
             "version",
             "author",
@@ -844,6 +817,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                 self.last_computed_area = feature_area
 
             # Set attribute values
+            first_feature.setAttribute("id", 1)
             first_feature.setAttribute("site_ref", self.site_reference_le.text())
             first_feature.setAttribute("version", self.site_ref_version_le.text())
             first_feature.setAttribute("author", self.report_author_le.text())
