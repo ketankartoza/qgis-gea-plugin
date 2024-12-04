@@ -4,8 +4,6 @@ Dialog for showing the attribute form dialog.
 """
 
 import os
-from datetime import datetime
-
 
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 
@@ -50,6 +48,7 @@ class AttributeForm(QtWidgets.QDialog, WidgetUi):
             QtCore.Qt.WindowMinimizeButtonHint | QtCore.Qt.WindowCloseButtonHint
         )
         self.setupUi(self)
+        self.parent = parent
         self.layer = layer
 
         self.project_cmb_box.addItems(PROJECT_AREAS)
@@ -123,9 +122,19 @@ class AttributeForm(QtWidgets.QDialog, WidgetUi):
             # Set attribute values
             feature_area = "-"
             geom = feature.geometry()
-            if geom is not None and geom.isGeosValid():
-                area = geom.area() / 10000
-                feature_area = f"{area:,.2f}"
+
+            if geom is None or not geom.isGeosValid():
+                self.parent.show_message(
+                    tr(
+                        "Skipped a feature with "
+                        "an invalid geometry."
+                    )
+                )
+                feature = next(features, None)
+                continue
+
+            area = geom.area() / 10000
+            feature_area = f"{area:,.2f}"
 
             feature.setAttribute(
                 "author",
@@ -135,7 +144,10 @@ class AttributeForm(QtWidgets.QDialog, WidgetUi):
                 "project",
                 self.project_cmb_box.currentText()
             )
-            feature.setAttribute("area (ha)", feature_area)
+            feature.setAttribute(
+                "area (ha)",
+                feature_area
+            )
 
             self.layer.updateFeature(feature)
             # Retrieve the next feature

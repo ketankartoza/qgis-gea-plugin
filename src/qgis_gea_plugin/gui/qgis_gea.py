@@ -29,7 +29,6 @@ from qgis.core import (
     QgsPalLayerSettings,
     QgsProject,
     QgsTask,
-    QgsTextBackgroundSettings,
     QgsTextFormat,
     QgsTemporalNavigationObject,
     QgsUnitTypes,
@@ -37,7 +36,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsVectorLayerEditUtils,
     QgsVectorLayerSimpleLabeling,
-
+    QgsWkbTypes
 )
 
 from qgis.gui import QgsLayerTreeView, QgsMessageBar
@@ -325,7 +324,28 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.load_attribute_form(layer)
 
     def load_attribute_form(self, layer):
-        attribute_form = AttributeForm(layer)
+
+        wkb_type = layer.wkbType()
+
+        if Qgis.QGIS_VERSION_INT < 33000:
+            geometry_type = QgsWkbTypes.geometryType(wkb_type)
+            layer_type = geometry_type == QgsWkbTypes.PolygonGeometry
+        else:
+            layer_type = QgsWkbTypes.flatType(wkb_type) in (
+                QgsWkbTypes.Polygon,
+                QgsWkbTypes.MultiPolygon
+            )
+
+        if not layer_type:
+            self.show_message(
+                tr(
+                    "Selected layer doesn't "
+                    "have a polygon geometry type."
+                )
+            )
+            return
+
+        attribute_form = AttributeForm(layer, parent=self)
         attribute_form.exec_()
 
     def project_folder_changed(self):
