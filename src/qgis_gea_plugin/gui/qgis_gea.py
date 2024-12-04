@@ -53,7 +53,7 @@ from ..definitions.defaults import (
     REPORT_SITE_BOUNDARY_STYLE,
     SITE_GROUP_NAME,
     FARMER_ID_FIELD,
-    PROJECT_INSTANCE_STYLE,
+    PROJECT_INSTANCE_STYLE, SATELLITE_IMAGERY,
 )
 from .attribute_form import AttributeForm
 from .report_progress_dialog import ReportProgressDialog
@@ -516,26 +516,44 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.drawing_frame.setEnabled(True)
             return
 
-        if self.site_reference_le.text() is None or self.site_reference_le.text().replace(' ', '') is '':
+        if (self.site_reference_le.text() is None or
+                self.site_reference_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the site reference before starting to draw the project area."),
+                tr(
+                    "Action Required: Please complete the attributes"
+                    " form before drawing the site polygon. "
+                    "This ensures all necessary details are "
+                    "captured accurately."
+                ),
                 Qgis.Warning
             )
             return
-        if self.site_ref_version_le.text() is None or self.site_ref_version_le.text().replace(' ', '') is '':
+        if (self.site_ref_version_le.text() is None or
+                self.site_ref_version_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the version of site reference before starting to draw the project area."),
+                tr(
+                    "Action Required: Please complete the attributes"
+                    " form before drawing the site polygon. "
+                    "This ensures all necessary details are "
+                    "captured accurately."
+                ),
                 Qgis.Warning
             )
             return
-        if self.report_author_le.text() is None or self.report_author_le.text().replace(' ', '') is '':
+        if (self.report_author_le.text() is None or
+                self.report_author_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the report generation author before starting to draw the project area."),
+                tr(
+                    "Action Required: Please complete the attributes"
+                    " form before drawing the site polygon. "
+                    "This ensures all necessary details are "
+                    "captured accurately."
+                ),
                 Qgis.Warning
             )
             return
 
-        layers = QgsProject.instance().mapLayersByName('Google Satellite (latest)')
+        layers = QgsProject.instance().mapLayersByName(SATELLITE_IMAGERY)
 
         if layers:
             self.update_layer_group(layers[0], True)
@@ -647,7 +665,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                      f"{self.capture_date}")
         return area_name
 
-    def is_project_info_valid(self) -> bool:
+    def is_project_info_valid(self, message) -> bool:
         """Validates user input.
         :returns: Returns True if the input is valid, else False.
         :rtype: bool
@@ -657,25 +675,28 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         if selected_date_time is None:
             self.show_message(
-                tr("Please add the project inception date before saving the project area"),
+                message,
                 Qgis.Warning
             )
             return False
-        if self.site_reference_le.text() is None or self.site_reference_le.text().replace(' ', '') is '':
+        if (self.site_reference_le.text() is None or
+                self.site_reference_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the site reference before saving the project area"),
+                message,
                 Qgis.Warning
             )
             return False
-        if self.report_author_le.text() is None or self.report_author_le.text().replace(' ', '') is '':
+        if (self.report_author_le.text() is None or
+                self.report_author_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the report generation author before saving the project area"),
+                message,
                 Qgis.Warning
             )
             return False
-        if self.site_ref_version_le.text() is None or self.site_ref_version_le.text().replace(' ', '') is '':
+        if (self.site_ref_version_le.text() is None or
+                self.site_ref_version_le.text().replace(' ', '') is ''):
             self.show_message(
-                tr("Please add the site reference version before saving the project area"),
+                message,
                 Qgis.Warning
             )
             return False
@@ -785,7 +806,14 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
             return
 
-        if not self.is_project_info_valid():
+        error_message = tr(
+            "Action Required: Please complete the"
+            " attributes form before saving the site polygon."
+            " This ensures all necessary details are"
+            " captured accurately."
+        )
+
+        if not self.is_project_info_valid(error_message):
             return
 
         selected_date_time = self.project_inception_date.dateTime()
@@ -1194,7 +1222,15 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             self.report_progress_dialog.show()
 
         elif group == SITE_GROUP_NAME:
-            if not self.is_project_info_valid():
+            message = tr(
+                "Report Generation Error:"
+                " No site drawing has been created or saved. "
+                "To generate a report, please complete the "
+                "following steps: fill in the attributes, "
+                "draw a site polygon, save your work, and "
+                "then click to generate the report."
+            )
+            if not self.is_project_info_valid(message):
                 return
 
             # Get capture date and area

@@ -69,6 +69,7 @@ PROJECT_INSTANCE_REPORT_TEMPLATE_NAME = "project_instance.qpt"
 
 PROJECT_INSTANCE_STYLE = "project_instances_style.qml"
 
+SATELLITE_IMAGERY = 'Google Satellite (latest)'
 
 FARMER_ID_FIELD = "FarmerID"
 
