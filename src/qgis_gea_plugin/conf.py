@@ -52,6 +52,8 @@ class Settings(enum.Enum):
     REPORT_COUNTRY = "report_country"
     PROJECT_INCEPTION_DATE = "project_inception_date"
 
+    SAVED_ATTRIBUTE = "saved_attributes"
+
     PROJECT_FOLDER = 'project_folder'
 
     ANIMATION_FRAME_RATE = 'frame_rate'
