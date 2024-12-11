@@ -1095,7 +1095,7 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             )
             log(f"Encountered an error when clearing the project drawn area.")
 
-    def show_message(self, message, level=Qgis.Warning):
+    def show_message(self, message, level=Qgis.Warning, duration=None):
         """Shows message on the main widget message bar.
 
         :param message: Text message
@@ -1103,9 +1103,21 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         :param level: Message level type
         :type level: Qgis.MessageLevel
+
+        :param duration: How to display the message
+        :type duration: int
         """
         self.message_bar.clearWidgets()
-        self.message_bar.pushMessage(message, level=level)
+
+        if duration:
+            self.message_bar.pushMessage(
+                message,
+                level=level,
+                duration=duration
+            )
+        else:
+            self.message_bar.pushMessage(message, level=level)
+
 
     def prepare_message_bar(self):
         """Initializes the widget message bar settings"""
@@ -1365,7 +1377,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
             if  site_layer.dataProvider().dataSourceUri().startswith('memory'):
                 self.show_message(
                     message,
-                    Qgis.Warning
+                    Qgis.Warning,
+                    duration=10
                 )
                 return
 
