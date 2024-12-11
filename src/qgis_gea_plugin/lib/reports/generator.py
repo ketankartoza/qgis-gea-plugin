@@ -641,41 +641,29 @@ class SiteReportReportGeneratorTask(QgsTask):
                 )
                 self._error_messages.append(tr_msg)
             else:
-                landscape_mask_layers = [self._site_layer]
+                tile_url = \
+                    'https://tiles.planet.com/basemaps/v1/' \
+                    'planet-tiles/planet_medres_visual_' \
+                    '2018-12_2019-05_mosaic/gmap/{z}/{x}/{y}.'\
+                    'png?api_key='
+                layer_name = "Planet Mosaic (2018-12 to 2019-05)"
+                tile_layer = QgsRasterLayer(f"type=xyz&url={tile_url}", layer_name, "wms")
+
+                QgsProject.instance().addMapLayers([tile_layer])
+
+                landscape_mask_layers = [self._site_layer, tile_layer]
                 landscape_mask_layers.extend(mask_layers)
                 if self._landscape_layer is not None:
                     landscape_mask_layers.append(self._landscape_layer)
                 historic_mask_map.setFollowVisibilityPreset(False)
                 historic_mask_map.setFollowVisibilityPresetName("")
                 historic_mask_map.setLayers(landscape_mask_layers)
-
-                start_date = QtCore.QDateTime.fromString("2018-12-01T00:00:00", "yyyy-MM-ddTHH:mm:ss")
-                end_date = QtCore.QDateTime.fromString("2018-12-31T23:59:59", "yyyy-MM-ddTHH:mm:ss")
-
-                layers = historic_mask_map.layers()
-                for layer in layers:
-
-                    log(f"checking {layer.name()}")
-
-                    if (layer.temporalProperties() and
-                            (layer.temporalProperties().fixedTemporalRange().begin().isValid() and
-                             layer.temporalProperties().fixedTemporalRange().end().isValid())
-                    ):
-
-                        log(f"{layer.name()} has right temporal properties")
-                        temporal_extent = layer.temporalProperties().fixedTemporalRange()
-
-                        visible = (temporal_extent.begin() >= start_date and
-                                   temporal_extent.end() <= end_date
-                                   )
-                        layer.setVisible(visible)
-                    else:
-                        log(f"NO temporal or valid properties in {layer.name()}")
-                        if layer.name() == SATELLITE_IMAGERY:
-                            layer.setVisible(False)
-
                 historic_mask_map.zoomToExtent(landscape_imagery_extent)
+
                 historic_mask_map.refresh()
+
+                QgsProject.instance().removeMapLayer(tile_layer.id())
+
 
         # Landscape with no-mask map
         landscape_no_mask_map = self._get_map_item_by_id("2018_historic_no_mask_map")
@@ -694,7 +682,17 @@ class SiteReportReportGeneratorTask(QgsTask):
                 )
                 self._error_messages.append(tr_msg)
             else:
-                landscape_no_mask_layers = [self._site_layer]
+                tile_url = \
+                    'https://tiles.planet.com/basemaps/v1/' \
+                    'planet-tiles/planet_medres_visual_' \
+                    '2018-12_2019-05_mosaic/gmap/{z}/{x}/{y}.'\
+                    'png?api_key='
+                layer_name = "Planet Mosaic (2018-12 to 2019-05)"
+                tile_layer = QgsRasterLayer(f"type=xyz&url={tile_url}", layer_name, "wms")
+
+                QgsProject.instance().addMapLayers([tile_layer])
+
+                landscape_no_mask_layers = [self._site_layer, tile_layer]
                 if self._landscape_layer is not None:
                     landscape_no_mask_layers.append(self._landscape_layer)
 
@@ -703,6 +701,9 @@ class SiteReportReportGeneratorTask(QgsTask):
                 landscape_no_mask_map.setLayers(landscape_no_mask_layers)
                 landscape_no_mask_map.zoomToExtent(landscape_no_mask_extent)
                 landscape_no_mask_map.refresh()
+
+                QgsProject.instance().removeMapLayer(tile_layer.id())
+
 
     def _configure_current_maps(
             self,
