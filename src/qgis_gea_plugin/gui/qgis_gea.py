@@ -838,6 +838,31 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         selected_date_time = self.project_inception_date.dateTime()
 
+        saved_attributes_message = tr(
+            f"It looks like you are trying to add a polygon with "
+            f"the same attributes as the previous polygon. "
+            f"Are you sure you want to save it?"
+        )
+
+        msg_box = QtWidgets.QMessageBox()
+        msg_box.setWindowTitle(tr("EPAL Plugin"))
+        msg_box.setText(saved_attributes_message)
+        msg_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+        yes_button = msg_box.button(QtWidgets.QMessageBox.Yes)
+        yes_button.setText("Save Anyway")
+
+        no_button = msg_box.button(QtWidgets.QMessageBox.No)
+        no_button.setText("Cancel")
+
+        if self.check_saved_attributes():
+            msg_box.exec_()
+
+            reply = msg_box.standardButton(msg_box.clickedButton())
+
+            if reply == QtWidgets.QMessageBox.No:
+                return
+
         # List of fields to enable editing on
         fields_to_enable = [
             "id",
@@ -939,6 +964,8 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                        f"{self.drawing_layer_path}."),
                     Qgis.Info
                 )
+
+                self.save_attributes()
             else:
                 self.show_message(
                     tr(f"Error saving project area polygon layer: {error}"),
@@ -950,6 +977,88 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
                        f"{layer_path}")
                 )
 
+    def save_attributes(self):
+        """
+        Saves the current form field values to QGIS settings.
+
+        This method retrieves the current values from the following fields in the form:
+
+        - Site reference
+        - Site reference version
+        - Report author
+        - Project inception date
+        - Report country
+
+        These values are then stored (or saved) plugin settings for later retrieval.
+        """
+
+        settings_manager.set_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.SITE_REFERENCE}",
+            self.site_reference_le.text()
+        )
+        settings_manager.set_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.SITE_VERSION}",
+            self.site_ref_version_le.text()
+        )
+        settings_manager.set_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.REPORT_AUTHOR}",
+            self.report_author_le.text()
+        )
+
+        settings_manager.set_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.PROJECT_INCEPTION_DATE}",
+            self.project_inception_date.date().toString("yyyy MM")
+        )
+
+        settings_manager.set_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.REPORT_COUNTRY}",
+            self.project_cmb_box.currentText()
+        )
+
+    def check_saved_attributes(self):
+        """
+        Compares the current values in the form fields with saved attribute values
+        to determine if the attributes have changed.
+
+        This method checks if the following fields in the form match their
+        corresponding saved values:
+
+        - Site reference
+        - Site reference version
+        - Report author
+        - Project inception date (formatted as "yyyy MM")
+        - Report country
+
+        :returns: ``True`` if the saved attributes match the current values in
+                  the form, otherwise ``False``.
+        :rtype: bool
+        """
+
+        saved_site_reference = settings_manager.get_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.SITE_REFERENCE}"
+        )
+        saved_site_ref_version = settings_manager.get_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.SITE_VERSION}"
+        )
+        saved_report_author = settings_manager.get_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.REPORT_AUTHOR}"
+        )
+        saved_project_inception_date = settings_manager.get_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.PROJECT_INCEPTION_DATE}"
+        )
+        saved_report_country = settings_manager.get_value(
+            f"{Settings.SAVED_ATTRIBUTE}_{Settings.REPORT_COUNTRY}"
+        )
+
+        if (saved_site_reference == self.site_reference_le.text() and
+            saved_site_ref_version == self.site_ref_version_le.text() and
+            saved_report_author == self.report_author_le.text() and
+            saved_project_inception_date == self.project_inception_date.date().toString("yyyy MM") and
+            saved_report_country == self.project_cmb_box.currentText()
+        ):
+            return True
+
+        return False
 
     def cancel_drawing(self):
         """
