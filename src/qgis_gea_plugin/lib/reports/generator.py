@@ -36,7 +36,7 @@ from ...definitions.defaults import (
     LANDSAT_IMAGERY_GROUP_NAME,
     OVERVIEW_ZOOM_OUT_FACTOR,
     REPORT_SITE_BOUNDARY_STYLE,
-    PROJECT_INSTANCE_STYLE
+    PROJECT_INSTANCE_STYLE, SATELLITE_IMAGERY
 )
 from ...models.base import LayerNodeSearch
 from ...models.report import (
@@ -648,6 +648,32 @@ class SiteReportReportGeneratorTask(QgsTask):
                 historic_mask_map.setFollowVisibilityPreset(False)
                 historic_mask_map.setFollowVisibilityPresetName("")
                 historic_mask_map.setLayers(landscape_mask_layers)
+
+                start_date = QtCore.QDateTime.fromString("2018-12-01T00:00:00", "yyyy-MM-ddTHH:mm:ss")
+                end_date = QtCore.QDateTime.fromString("2018-12-31T23:59:59", "yyyy-MM-ddTHH:mm:ss")
+
+                layers = historic_mask_map.layers()
+                for layer in layers:
+
+                    log(f"checking {layer.name()}")
+
+                    if (layer.temporalProperties() and
+                            (layer.temporalProperties().fixedTemporalRange().begin().isValid() and
+                             layer.temporalProperties().fixedTemporalRange().end().isValid())
+                    ):
+
+                        log(f"{layer.name()} has right temporal properties")
+                        temporal_extent = layer.temporalProperties().fixedTemporalRange()
+
+                        visible = (temporal_extent.begin() >= start_date and
+                                   temporal_extent.end() <= end_date
+                                   )
+                        layer.setVisible(visible)
+                    else:
+                        log(f"NO temporal or valid properties in {layer.name()}")
+                        if layer.name() == SATELLITE_IMAGERY:
+                            layer.setVisible(False)
+
                 historic_mask_map.zoomToExtent(landscape_imagery_extent)
                 historic_mask_map.refresh()
 
