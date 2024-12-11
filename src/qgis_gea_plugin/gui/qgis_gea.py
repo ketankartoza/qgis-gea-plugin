@@ -1352,14 +1352,21 @@ class QgisGeaPlugin(QtWidgets.QDockWidget, WidgetUi):
 
         elif group == SITE_GROUP_NAME:
             message = tr(
-                "Report Generation Error:"
-                " No site drawing has been created or saved. "
+                "Report Generation Error: "
+                "No site drawing has been created or saved. "
                 "To generate a report, please complete the "
                 "following steps: fill in the attributes, "
                 "draw a site polygon, save your work, and "
                 "then click to generate the report."
             )
             if not self.is_project_info_valid(message):
+                return
+
+            if  site_layer.dataProvider().dataSourceUri().startswith('memory'):
+                self.show_message(
+                    message,
+                    Qgis.Warning
+                )
                 return
 
             # Get capture date and area
